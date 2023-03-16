@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "home-monitoring-display"
+version = "0.1.0"
+description = "Display of home_monitoring metrics"
+authors = ["tdurouchoux <thibault.durouchoux@gmail.com>"]
+readme = "README.md"
+packages = [{include = "home_monitoring_display"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+influxdb-client = "^1.36.1"
+PyYAML = "^6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
