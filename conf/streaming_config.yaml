@@ -1,0 +1,126 @@
+title: "Home monitoring"
+
+temperature_thresholds: &temperature_thresholds
+  18: blue
+  22: green
+  26: orange
+  50: red
+
+humidity_thresholds: &humidity_thresholds
+  0.2: red
+  0.4: orange
+  0.6: green
+  0.8: blue
+  1: purple
+
+outside_temperature_thresholds: &outside_temperature_thresholds
+  5: blue
+  10: green
+  20: orange
+  30: red
+
+indicators_parameters:
+  window_size: 10m
+
+layouts:
+  - title: "Consommation électricité"
+    influxdb_connector: pi
+    indicators:
+      - type: trend
+        title: "Puissance apparente (W)"
+        measurement: teleinfo
+        field: PAPP
+        refresh_rate: 5s
+      - type: trend
+        title: "Courant instantané (A)"
+        measurement: teleinfo
+        field: IINST
+        refresh_rate: 5s
+      - type: number
+        name: "Consommation totale"
+        measurement: teleinfo
+        field: BASE
+        refresh_rate: 5m
+        string_format: "{value:,.0f} kWh"
+        math_operation: !math_op ["/", 1000]
+  - title: "Capteurs cuisine"
+    influxdb_connector: pi
+    indicators:
+      - type: number
+        name: "Température"
+        measurement: sensorhub
+        field: TempOffchip
+        refresh_rate: 120s
+        thresholds: *temperature_thresholds
+        string_format: "{value:.1f}°C"
+      - type: gauge
+        name: "Humidité"
+        measurement: sensorhub
+        field: Humidity
+        refresh_rate: 120s
+        bounds: [0, 100]
+        thresholds: *humidity_thresholds
+        format_suffix: "%"
+      - type: number
+        name: Pression
+        measurement: sensorhub
+        field: Pressure
+        refresh_rate: 120s
+        string_format: "{value:.4f} Bar"
+  - title: "Capteurs salon"
+    influxdb_connector: homemonitor
+    indicators:
+      - type: number
+        name: "Température"
+        measurement: bme688
+        field: temperature
+        refresh_rate: 120s
+        thresholds: *temperature_thresholds
+        string_format: "{value:.1f}°C"
+      - type: gauge
+        name: "Humidité"
+        measurement: bme688
+        field: humidity
+        refresh_rate: 120s
+        bounds: [0, 100]
+        thresholds: *humidity_thresholds
+        format_suffix: "%"
+      - type: number
+        name: Pression
+        measurement: bme688
+        field: pressure
+        refresh_rate: 120s
+        string_format: "{value:.4f} Bar"
+        math_operation: !math_op ["/", 1000]
+      # - type: trend
+      #   title: "Indicateur qualité air"
+      #   measurement: bme688
+      #   field: gas_resistance
+      #   refresh_rate: 60s
+  - title: "Météo extérieur"
+    influxdb_connector: homemonitor
+    indicators:
+      - type: number
+        name: "Température"
+        measurement: openweather_current_weather
+        field: temp
+        refresh_rate: 10m
+        thresholds: *outside_temperature_thresholds
+        string_format: "{value:.1f}°C"
+      - type: gauge
+        name: "Humidité"
+        measurement: openweather_current_weather
+        field: humidity
+        refresh_rate: 10m
+        bounds: [0, 100]
+        thresholds: *humidity_thresholds
+        format_suffix: "%"
+      - type: number
+        name: "Vent"
+        measurement: openweather_current_weather
+        field: wind_speed
+        refresh_rate: 10m
+        string_format: "{value:.1f} km/h"
+        math_operation: !math_op ["*", 3.6]
+
+      
