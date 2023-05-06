@@ -7,10 +7,27 @@ readme = "README.md"
 packages = [{include = "home_monitoring_display"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.12"
 influxdb-client = "^1.36.1"
 PyYAML = "^6.0"
+panel = "^0.14.4"
+streamz = "^0.6.4"
+reactivex = "^4.0.4"
+pandas = "^1.5.3"
+hvplot = "^0.8.3"
+pyparsing = "^3.0.9"
+holoviews = "^1.15.4"
+scipy = "^1.10.1"
+influxdb = "^5.3.1"
+pytz = "^2023.3"
+matplotlib = "^3.7.1"
+scikit-learn = "^1.2.2"
 
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
