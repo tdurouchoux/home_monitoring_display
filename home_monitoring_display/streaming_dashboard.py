@@ -6,7 +6,7 @@ import panel as pn
 
 from home_monitoring_display.utils import load_config
 from home_monitoring_display.query_influxdb import InfluxDBConnector
-from home_monitoring_display.indicator_factory import IndicatorFactory
+from home_monitoring_display import indicator_factory
 
 conf_directory = Path(__file__).parent.parent.joinpath("conf")
 
@@ -16,8 +16,6 @@ connectors_conf = load_config(conf_directory.joinpath("connectors_config.yaml"))
 influxdb_connectors = {
     name: InfluxDBConnector(**config) for name, config in connectors_conf.items()
 }
-
-indicator_factory = IndicatorFactory(**conf["indicators_parameters"])
 
 layout_list = []
 
@@ -47,6 +45,12 @@ for layout_config in conf["layouts"]:
                     influxdb_connector, **indicator_config_copy
                 )
             )
+        elif indicator_config["type"] == "weather_icon":
+            indicator_list.append(
+                indicator_factory.create_weather_icon(
+                    influxdb_connector, **indicator_config_copy
+                )
+            )
         else:
             raise ValueError(
                 f"Indicator type should either be 'trend' or 'number', got : {indicator_config['type']}"
@@ -58,6 +62,7 @@ for layout_config in conf["layouts"]:
             title=layout_config["title"],
             sizing_mode="stretch_both",
             collapsible=False,
+            background="#e6ebfc"
         )
     )
 

@@ -146,6 +146,18 @@ class InfluxDBConnector:
                     FROM {measurement}
                     WHERE time > {self.convert_time_cond(start)}
                     AND time < {self.convert_time_cond(stop)}"""
-
+                    
         df_mean_query = self.client.query(query)[measurement]
         return df_mean_query.iloc[0][field]
+
+    def query_last_field(
+        self, measurement, field: str,
+    ):
+        self._connect()
+        
+        query_last = f"""SELECT last({field}) as {field}
+                FROM {measurement}"""
+                
+        df_query_last = self.client.query(query_last)[measurement]
+        
+        return df_query_last.iloc[0][field]

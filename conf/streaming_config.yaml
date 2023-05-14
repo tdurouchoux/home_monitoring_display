@@ -15,12 +15,11 @@ humidity_thresholds: &humidity_thresholds
 
 outside_temperature_thresholds: &outside_temperature_thresholds
   5: blue
-  10: green
-  20: orange
-  30: red
+  15: green
+  25: orange
+  100: red
 
 indicators_parameters:
-  window_size: 10m
 
 layouts:
   - title: "Consommation électricité"
@@ -31,11 +30,13 @@ layouts:
         measurement: teleinfo
         field: PAPP
         refresh_rate: 5s
+        window_size: 10m
       - type: trend
         title: "Courant instantané (A)"
         measurement: teleinfo
         field: IINST
         refresh_rate: 5s
+        window_size: 10m
       - type: number
         name: "Consommation totale"
         measurement: teleinfo
@@ -100,6 +101,10 @@ layouts:
   - title: "Météo extérieur"
     influxdb_connector: homemonitor
     indicators:
+      - type: weather_icon
+        measurement: openweather_current_weather
+        field: weather_description
+        refresh_rate: 10m
       - type: number
         name: "Température"
         measurement: openweather_current_weather
