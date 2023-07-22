@@ -4,7 +4,7 @@ from inky import InkyPHAT
 import buttonshim
 
 from home_monitoring_display import inky
-from home_monitoring_display.influxdb.query_influxdb import InfluxdbConnector
+from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display import utils
 
 PAGES_MAPPING = {
@@ -67,39 +67,39 @@ def main():
     inky = InkyPHAT("yellow")
     inky_config = utils.load_config(config_file)
 
-    connectors_config = utils.load_config(connector_config_file)
+    connectors_config = utils.load_config(connectors_config_file)
     # ! I don't love this
     influxdb_connectors = {
-        name: InfluxdbConnector(**config) for name, config in connectors_config.items()
+        name: InfluxDBConnector(**config) for name, config in connectors_config.items()
     }
 
     page = PAGES_MAPPING[next_page](
         inky, influxdb_connectors, inky_config["font"], **inky_config[next_page]
     )
     page.set_image()
-    page.enable_auto_refresh()
+    # page.enable_auto_refresh()
     current_page = next_page
 
-    while True:
-        time.sleep(0.1)
+    # while True:
+        # time.sleep(0.1)
 
-        if current_page != next_page:
-            page.disable_auto_refresh()
+        # if current_page != next_page:
+        #     page.disable_auto_refresh()
 
-            page = PAGES_MAPPING[next_page](
-                inky, influxdb_connectors, inky_config["font"], **inky_config[next_page]
-            )
-            page.enable_auto_refresh()
-            current_page = next_page
+        #     page = PAGES_MAPPING[next_page](
+        #         inky, influxdb_connectors, inky_config["font"], **inky_config[next_page]
+        #     )
+        #     page.enable_auto_refresh()
+        #     current_page = next_page
 
-        elif stop_refresh:
-            if page.enabled:
-                page.disable_auto_refresh()
-            # print something on the screen to show that it is disabled
-        else:
-            page.refresh()
-            if not page.enabled:
-                page.enable_auto_refresh()
+        # elif stop_refresh:
+        #     if page.enabled:
+        #         page.disable_auto_refresh()
+        #     # print something on the screen to show that it is disabled
+        # else:
+        #     page.refresh()
+        #     if not page.enabled:
+        #         page.enable_auto_refresh()
 
 
 if __name__ == "__main__":
