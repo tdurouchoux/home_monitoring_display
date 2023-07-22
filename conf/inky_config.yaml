@@ -33,7 +33,7 @@ homemonitor:
         app_power: PAPP
 
 dayweather:
-  refresh_period: 600
+  refresh_period: 60
   gps_coordinates: [48.85, 2.35]
 
 citiesweather:

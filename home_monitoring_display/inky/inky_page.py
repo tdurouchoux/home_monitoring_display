@@ -130,11 +130,13 @@ class InkyPage(ABC):
 
     def display_image(self, data: Dict) -> None:
         img = self.get_image(data)
+        print("Created image")
         self.inky_display.set_image(img)
         self.inky_display.show()
 
     def refresh(self) -> None:
         data = self.get_data()
+        print("Retrieved data")
         self.display_image(data)
 
     def enable_auto_refresh(self) -> None:

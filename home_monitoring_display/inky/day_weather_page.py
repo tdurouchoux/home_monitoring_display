@@ -91,7 +91,7 @@ class DayWeatherPage(InkyPage):
         return data
 
     def draw_3hour_case(
-        self, time: str, temp: str, description: str, x: int, y: int, img: Image
+        self, time: str, temp: float, description: str, x: int, y: int, img: Image
     ) -> None:
         draw_case = ImageDraw.Draw(img)
         draw_case.rectangle(
@@ -108,7 +108,10 @@ class DayWeatherPage(InkyPage):
             (x + 43, y + 4), time, font=self.lower_font, fill=self.inky_display.WHITE
         )
         draw_case.text(
-            (x + 43, y + 16), temp, font=self.lower_font, fill=self.inky_display.WHITE
+            (x + 43, y + 16),
+            f"{temp:.1f}˚C",
+            font=self.lower_font,
+            fill=self.inky_display.WHITE,
         )
 
     def get_image(self, data) -> Image:
@@ -127,7 +130,7 @@ class DayWeatherPage(InkyPage):
         )
         draw.text(
             (57, 30),
-            data["current_temp"],
+            f"{data['current_temp']:.1f}˚C",
             font=self.higher_font,
             fill=self.inky_display.WHITE,
         )
@@ -144,18 +147,22 @@ class DayWeatherPage(InkyPage):
                     110 + (i + 1) * (self.RAIN_WIDTH + 2),
                     45,
                 ),
-                fill=data[f"rain{i}"],
+                fill=data[f"rain_{i}"],
                 outline=self.inky_display.WHITE,
                 width=2,
             )
 
         # Draw day weather
-        for i in range(3):
+        for i in range(6):
             self.draw_3hour_case(
                 data[f"hour_{i}_time"],
                 data[f"hour_{i}_temp"],
-                draw[f"hour_{i}_description"],
+                data[f"hour_{i}_description"],
                 (i % 3) * (2 + self.CASE_WIDTH),
                 60 + (i // 3) * (2 + self.CASE_HEIGHT),
                 img,
             )
+
+        img.save("test.png")
+
+        return img
