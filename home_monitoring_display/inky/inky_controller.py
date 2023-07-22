@@ -9,10 +9,10 @@ from home_monitoring_display import utils
 
 PAGES_MAPPING = {
     "homemonitor": inky.home_monitor_page.HomeMonitorPage,
-    "dayweather": inky_pages.DailyWeatherPage,
-    "citiesweather": inky_pages.CitiesWeatherPage,
-    "elecconsumption": inky_pages.ElecConsumptionPage,
-    "sysmonitor": inky_pages.SysMonitorPage,
+    # "dayweather": inky_pages.DailyWeatherPage,
+    # "citiesweather": inky_pages.CitiesWeatherPage,
+    # "elecconsumption": inky_pages.ElecConsumptionPage,
+    # "sysmonitor": inky_pages.SysMonitorPage,
 }
 
 # ? use buttonshim led
