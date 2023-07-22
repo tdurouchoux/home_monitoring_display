@@ -33,4 +33,3 @@ export PANEL_OAUTH_SECRET=<oauth_secret>
 export PANEL_COOKIE_SECRET=$(panel secret)
 ```
 6. Add following options to run command : ```--allow-websocket-origin=<dyn_dns_domain>:5006 --oauth-provider=<oauth_provider>```
-

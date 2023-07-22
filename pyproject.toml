@@ -14,7 +14,7 @@ streamz = "^0.6.4"
 reactivex = "^4.0.4"
 pandas = "^1.5.3"
 pyparsing = "^3.0.9"
-scipy = {url = "https://www.piwheels.org/simple/scipy/SciPy-1.8.1-cp39-cp39-linux_armv7l.whl#sha256=f6865c8d400b37c65af13b1d7751480840f99169da80478095508f2929365e39"}
+scipy = {url = "https://www.piwheels.org/simple/scipy/SciPy-1.8.1-cp39-cp39-linux_armv6l.whl#sha256=f6865c8d400b37c65af13b1d7751480840f99169da80478095508f2929365e39"}
 influxdb = "^5.3.1"
 pytz = "^2023.3"
 scikit-learn = "^1.2.2"
