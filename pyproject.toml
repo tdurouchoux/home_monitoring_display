@@ -26,7 +26,7 @@ optional = true
 jupyter = "^1.0.0"
 
 [tool.poetry.group.panel]
-optional = false
+optional = true
 
 [tool.poetry.group.panel.dependencies]
 hvplot = "^0.8.3"
@@ -46,7 +46,11 @@ buttonshim="^0.0.2"
 [[tool.poetry.source]]
 name = "piwheels"
 url = "https://www.piwheels.org/simple"
-priority = 'explicit'
+priority = 'default'
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = 'primary'
 
 [build-system]
 requires = ["poetry-core"]
