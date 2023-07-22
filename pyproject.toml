@@ -41,6 +41,7 @@ optional = false
 inky = "^0.0.4"
 Pillow = "^10.0.0"
 buttonshim="^0.0.2"
+smbus = "^1.1.post2"
 
 
 [[tool.poetry.source]]

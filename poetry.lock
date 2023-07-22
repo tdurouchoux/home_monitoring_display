@@ -2624,6 +2624,28 @@ url = "https://www.piwheels.org/simple"
 reference = "piwheels"
 
 [[package]]
+name = "smbus"
+version = "1.1.post2"
+description = "Python bindings for Linux SMBus access through i2c-dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "smbus-1.1.post2-cp34-cp34m-linux_armv6l.whl", hash = "sha256:39923448455a41c6bbe823de62b191103dd711917056362d9e4b1d2c6ec0f06d"},
+    {file = "smbus-1.1.post2-cp34-cp34m-linux_armv7l.whl", hash = "sha256:39923448455a41c6bbe823de62b191103dd711917056362d9e4b1d2c6ec0f06d"},
+    {file = "smbus-1.1.post2-cp35-cp35m-linux_armv6l.whl", hash = "sha256:3e59ce378dbf9b201497e9f99b43714acc7d562b08641d7b98ad9df762ffd865"},
+    {file = "smbus-1.1.post2-cp35-cp35m-linux_armv7l.whl", hash = "sha256:3e59ce378dbf9b201497e9f99b43714acc7d562b08641d7b98ad9df762ffd865"},
+    {file = "smbus-1.1.post2-cp37-cp37m-linux_armv6l.whl", hash = "sha256:3a04a09dd7bd2ce838a65f98d83901b3f6980593269d3668e974fc55a0db833e"},
+    {file = "smbus-1.1.post2-cp37-cp37m-linux_armv7l.whl", hash = "sha256:3a04a09dd7bd2ce838a65f98d83901b3f6980593269d3668e974fc55a0db833e"},
+    {file = "smbus-1.1.post2-cp39-cp39-linux_armv6l.whl", hash = "sha256:b0cdccebd5d4e611cfb950bddff8798962b5d709a8e6d46c29b1929ab4f2abbc"},
+    {file = "smbus-1.1.post2-cp39-cp39-linux_armv7l.whl", hash = "sha256:b0cdccebd5d4e611cfb950bddff8798962b5d709a8e6d46c29b1929ab4f2abbc"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://www.piwheels.org/simple"
+reference = "piwheels"
+
+[[package]]
 name = "smbus2"
 version = "0.4.2"
 description = "smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python"
@@ -3061,4 +3083,4 @@ reference = "piwheels"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.11"
-content-hash = "a5abf3dedcddce33e759c1e733201c8528922ebbca5ae1d9de05807a58beb1b3"
+content-hash = "2045d1b43111f5778a387bc4674ae15c91dd3f97389cf4cfb007cd0183521889"
