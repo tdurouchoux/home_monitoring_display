@@ -1,0 +1,65 @@
+
+resources_path: &resources_path "resources"
+font: !path_join [*resources_path, "MesloLGS NF Regular.ttf"]
+
+
+homemonitor:
+  refresh_period: 300
+  fields_configuration: 
+    weather:
+      influxdb_connector: homemonitor
+      measurement: openweather_current_weather
+      fields:
+        temperature: temp
+        humidity: humidity
+        wind_speed: wind_speed
+        weather_description: weather_description
+    salon:
+      influxdb_connector: homemonitor
+      measurement: bme688
+      fields: 
+        temperature: temperature
+        weather_description: humidity
+    cuisine:
+      influxdb_connector: pi
+      measurement: bme280
+      fields:
+        temperature: temperature
+        humidity: humidity
+    elec:
+      influxdb_connector: pi
+      measurement: teleinfo
+      fields:
+        app_power: PAPP
+
+dayweather:
+  refresh_period: 600
+  city: "Paris, FR"
+
+citiesweather:
+  refresh_period: 1800
+  cities:
+    - "Carnac, FR"
+    - "Peisey-Nancroix, FR"
+    - "Avignon, FR"
+    - "New York, US"
+
+elecconsumption:
+  refresh_period: 600
+  fields_configuration:
+    influxdb_connector: pi
+    measurement: teleinfo
+    fields:
+      app_power: PAPP
+      total_power: BASE 
+
+sysmonitor:
+  refresh_period: 300
+  fields_configuration:
+    # influxdb_connector: pi
+    # measurement: system_hm
+    # fields:
+    #     cpu_temp: cpu_temp
+    #     cpu_usage: cpu_usage
+    #     mem_usage: mem_usage
+    #     disk_usage: disk_usage
