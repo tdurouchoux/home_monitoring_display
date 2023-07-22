@@ -10,17 +10,13 @@ packages = [{include = "home_monitoring_display"}]
 python = ">=3.9,<3.11"
 influxdb-client = "^1.36.1"
 PyYAML = "^6.0"
-panel = "^0.14.4"
 streamz = "^0.6.4"
 reactivex = "^4.0.4"
 pandas = "^1.5.3"
-hvplot = "^0.8.3"
 pyparsing = "^3.0.9"
-holoviews = "^1.15.4"
 scipy = {url = "https://www.piwheels.org/simple/scipy/SciPy-1.8.1-cp39-cp39-linux_armv7l.whl#sha256=f6865c8d400b37c65af13b1d7751480840f99169da80478095508f2929365e39"}
 influxdb = "^5.3.1"
 pytz = "^2023.3"
-matplotlib = "^3.7.1"
 scikit-learn = "^1.2.2"
 
 [tool.poetry.group.dev]
@@ -29,11 +25,28 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
 
+[tool.poetry.group.panel]
+optional = false
+
+[tool.poetry.group.panel.dependencies]
+hvplot = "^0.8.3"
+holoviews = "^1.15.4"
+panel = "^0.14.4"
+matplotlib = "^3.7.1"
+
+[tool.poetry.group.inky]
+optional = false
+
+[tool.poetry.group.inky.dependencies]
+inky = "^0.0.4"
+Pillow = "^10.0.0"
+buttonshim="^0.0.2"
+
+
 [[tool.poetry.source]]
 name = "piwheels"
 url = "https://www.piwheels.org/simple"
-secondary = false
-
+priority = 'explicit'
 
 [build-system]
 requires = ["poetry-core"]
