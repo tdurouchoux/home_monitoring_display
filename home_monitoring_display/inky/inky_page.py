@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from inky import InkyPHAT
 import numpy as np
 import reactivex as rx
+from reactivex import operators
 from reactivex.scheduler import NewThreadScheduler
 
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
@@ -99,11 +100,10 @@ class InkyPage(ABC):
     def get_data(self):
         pass
 
-    @staticmethod
-    def get_icon(
-        weather_description: str, resize_dim: Tuple[int] = None
-    ) -> Tuple[Image, Image]:
-        icon = Image.open(MAPPING_ICON_ID[weather_description]).convert("P")
+    def get_icon(self, weather_description: str, resize_dim: Tuple[int] = None):
+        icon = Image.open(
+            os.path.join(self.resources_path, MAPPING_ICON_ID[weather_description])
+        ).convert("P")
         icon = icon.crop((4, 4, 38, 43))
         if resize_dim is not None:
             icon = icon.resize(resize_dim)
@@ -142,17 +142,16 @@ class InkyPage(ABC):
 
         # ? maybe implement catch / retry
         self.rx_event = (
-            rx.interval(period=timedelta(seconds=self.period))
+            rx.interval(period=timedelta(seconds=self.refresh_period))
             .pipe(
-                rx.operators.map(lambda i: self.get_data()),
-                rx.operators.subscribe_on(self.scheduler),
+                operators.map(lambda i: self.get_data()),
+                operators.subscribe_on(self.scheduler),
             )
             .subscribe(lambda data: self.display_image(data))
         )
+
         self.enabled = True
 
     def disable_auto_refresh(self) -> None:
         self.rx_event.dispose()
         self.enabled = False
-
-

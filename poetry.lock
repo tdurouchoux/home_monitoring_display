@@ -807,19 +807,23 @@ reference = "piwheels"
 
 [[package]]
 name = "inky"
-version = "0.0.4"
+version = "1.5.0"
 description = "Inky pHAT Driver"
 optional = false
 python-versions = "*"
 files = [
-    {file = "inky-0.0.4-py3-none-any.whl", hash = "sha256:299b10461709ec8d881d9eb953d51212f69e21d83b27b7f9e08bae601a5faba1"},
+    {file = "inky-1.5.0-py3-none-any.whl", hash = "sha256:e16ecd76b906bd498abb00afa56d2afb45beff917b4f2dd09128850aa569d83e"},
 ]
 
 [package.dependencies]
 numpy = "*"
-"RPi.GPIO" = "*"
 smbus2 = "*"
 spidev = "*"
+
+[package.extras]
+example-depends = ["beautifulsoup4", "font-fredoka-one", "font-hanken-grotesk", "font-intuitive", "font-source-serif-pro", "geocoder", "requests"]
+rpi = ["RPi.GPIO"]
+rpi-gpio-output = ["RPi.GPIO"]
 
 [package.source]
 type = "legacy"
@@ -2499,26 +2503,6 @@ files = [
 ]
 
 [[package]]
-name = "rpi-gpio"
-version = "0.7.1"
-description = "A module to control Raspberry Pi GPIO channels"
-optional = false
-python-versions = "*"
-files = [
-    {file = "RPi.GPIO-0.7.1-cp35-cp35m-linux_armv6l.whl", hash = "sha256:5073d1972727cfad38a1a42f02da91dc41f137679290aa804ab6c410168347ac"},
-    {file = "RPi.GPIO-0.7.1-cp35-cp35m-linux_armv7l.whl", hash = "sha256:5073d1972727cfad38a1a42f02da91dc41f137679290aa804ab6c410168347ac"},
-    {file = "RPi.GPIO-0.7.1-cp37-cp37m-linux_armv6l.whl", hash = "sha256:e5dfec2c4ccb7dbe9eef3dfc76a3b04121fc62d77fd8fbe1a8e841468a1b0c4c"},
-    {file = "RPi.GPIO-0.7.1-cp37-cp37m-linux_armv7l.whl", hash = "sha256:e5dfec2c4ccb7dbe9eef3dfc76a3b04121fc62d77fd8fbe1a8e841468a1b0c4c"},
-    {file = "RPi.GPIO-0.7.1-cp39-cp39-linux_armv6l.whl", hash = "sha256:231f6142c25975a7e39b96faf4905f05f97dba6809e8c5f0d58f284b35b4b821"},
-    {file = "RPi.GPIO-0.7.1-cp39-cp39-linux_armv7l.whl", hash = "sha256:231f6142c25975a7e39b96faf4905f05f97dba6809e8c5f0d58f284b35b4b821"},
-]
-
-[package.source]
-type = "legacy"
-url = "https://www.piwheels.org/simple"
-reference = "piwheels"
-
-[[package]]
 name = "scikit-learn"
 version = "1.3.0"
 description = "A set of python modules for machine learning and data mining"
@@ -3083,4 +3067,4 @@ reference = "piwheels"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.11"
-content-hash = "2045d1b43111f5778a387bc4674ae15c91dd3f97389cf4cfb007cd0183521889"
+content-hash = "86859fbf2da2e56be51f96d3f231a9781c5c5b280e51ea22c4028f7c5f020c37"

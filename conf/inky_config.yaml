@@ -1,10 +1,10 @@
 
-resources_path: &resources_path "resources"
-font: !path_join [*resources_path, "MesloLGS NF Regular.ttf"]
+resources_path: "resources"
+font: "MesloLGS NF Regular.ttf"
 
 
 homemonitor:
-  refresh_period: 300
+  refresh_period: 60
   fields_configuration: 
     weather:
       influxdb_connector: homemonitor
@@ -19,7 +19,7 @@ homemonitor:
       measurement: bme688
       fields: 
         temperature: temperature
-        weather_description: humidity
+        humidity: humidity
     cuisine:
       influxdb_connector: pi
       measurement: bme280

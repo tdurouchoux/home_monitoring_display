@@ -6,6 +6,7 @@ from inky import InkyPHAT
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.inky.inky_page import InkyPage
 
+
 class HomeMonitorPage(InkyPage):
     SUBCASE_WIDTH = 82
 
@@ -13,17 +14,22 @@ class HomeMonitorPage(InkyPage):
         self,
         inky_display: InkyPHAT,
         influxdb_connectors: Dict[str, InfluxDBConnector],
+        resources_path: str,
         font: str,
         refresh_period: int,
         fields_configuration: Dict,
     ) -> None:
         self.fields_configuration = fields_configuration
-        super().__init__(inky_display, influxdb_connectors, font, refresh_period)
+        super().__init__(
+            inky_display, influxdb_connectors, resources_path, font, refresh_period
+        )
 
     def get_data(self) -> Dict:
         data = {}
 
-        for name, config in self.fields_configuration:
+        for field_cat, config in self.fields_configuration.items():
+            data[field_cat] = {}
+
             if field_cat == "elec":
                 data["elec"]["app_power"] = self.influxdb_connectors[
                     config["influxdb_connector"]
@@ -32,8 +38,8 @@ class HomeMonitorPage(InkyPage):
                 )
 
             else:
-                for field_name, field in self.field_configuration["fields"].items():
-                    data[name][field_name] = self.influxdb_connectors[
+                for field_name, field in config["fields"].items():
+                    data[field_cat][field_name] = self.influxdb_connectors[
                         config["influxdb_connector"]
                     ].query_last_field(config["measurement"], field)
 
@@ -54,19 +60,19 @@ class HomeMonitorPage(InkyPage):
             (70, 16),
             f"{data['weather']['temperature']:.1f}˚C",
             font=values_font,
-            fill=self.inky_displayYELLOW,
+            fill=self.inky_display.YELLOW,
         )
         draw.text(
             (135, 16),
-            f"{int(data['weather']['humidity'])} %",
+            f"{int(data['weather']['humidity'])}%",
             font=values_font,
-            fill=self.inky_displayWHITE,
+            fill=self.inky_display.WHITE,
         )
         draw.text(
             (180, 16),
             f"{int(data['weather']['wind_speed'])}km/h",
             font=values_font,
-            fill=self.inky_displayWHITE,
+            fill=self.inky_display.WHITE,
         )
 
         draw.line(
@@ -109,7 +115,7 @@ class HomeMonitorPage(InkyPage):
         )
         draw.text(
             (self.SUBCASE_WIDTH * 5 / 4, 75),
-            f"{data['cuisine']['temperature']:.1f}",
+            f"{data['cuisine']['temperature']:.1f}˚C",
             font=values_font,
             fill=self.inky_display.YELLOW,
         )
@@ -140,7 +146,7 @@ class HomeMonitorPage(InkyPage):
         )
         draw.text(
             (self.SUBCASE_WIDTH * 9 / 4 + 3, 85),
-            f"{data['elec']['app_power']} W",
+            f"{int(data['elec']['app_power'])} W",
             font=values_font,
             fill=self.inky_display.WHITE,
         )
