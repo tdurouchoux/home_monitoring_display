@@ -1,9 +1,9 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 from datetime import timedelta
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from inky import InkyPHAT
 import numpy as np
 import reactivex as rx

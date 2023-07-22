@@ -3,13 +3,15 @@ import time
 from inky.auto import auto
 import buttonshim
 
-from home_monitoring_display.inky.home_monitor_page import HomeMonitorPage
+
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display import utils
+from home_monitoring_display.inky.home_monitor_page import HomeMonitorPage
+from home_monitoring_display.inky.day_weather_page imprt DayWeatherPage
 
 PAGES_MAPPING = {
     "homemonitor": HomeMonitorPage,
-    # "dayweather": inky_pages.DailyWeatherPage,
+    "dayweather": DayWeatherPage,
     # "citiesweather": inky_pages.CitiesWeatherPage,
     # "elecconsumption": inky_pages.ElecConsumptionPage,
     # "sysmonitor": inky_pages.SysMonitorPage,
@@ -89,25 +91,25 @@ def main():
     current_page = next_page
 
     while True:
-        time.sleep(2)
+        time.sleep(.1)
 
-    # if current_page != next_page:
-    #     page.disable_auto_refresh()
+        if current_page != next_page:
+            page.disable_auto_refresh()
 
-    #     page = PAGES_MAPPING[next_page](
-    #         inky_display, influxdb_connectors, inky_config["font"], **inky_config[next_page]
-    #     )
-    #     page.enable_auto_refresh()
-    #     current_page = next_page
+            page = PAGES_MAPPING[next_page](
+                inky_display, influxdb_connectors, inky_config["font"], **inky_config[next_page]
+            )
+            page.enable_auto_refresh()
+            current_page = next_page
 
-    # elif stop_refresh:
-    #     if page.enabled:
-    #         page.disable_auto_refresh()
-    #     # print something on the screen to show that it is disabled
-    # else:
-    #     page.refresh()
-    #     if not page.enabled:
-    #         page.enable_auto_refresh()
+        elif stop_refresh:
+            if page.enabled:
+                page.disable_auto_refresh()
+            # print something on the screen to show that it is disabled
+        else:
+            page.refresh()
+            if not page.enabled:
+                page.enable_auto_refresh()
 
 
 if __name__ == "__main__":

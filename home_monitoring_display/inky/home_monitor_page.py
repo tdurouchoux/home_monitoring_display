@@ -19,10 +19,14 @@ class HomeMonitorPage(InkyPage):
         refresh_period: int,
         fields_configuration: Dict,
     ) -> None:
-        self.fields_configuration = fields_configuration
+        
         super().__init__(
             inky_display, influxdb_connectors, resources_path, font, refresh_period
         )
+        
+        self.fields_configuration = fields_configuration
+        self.header_font = ImageFont.truetype(self.font, 11)
+        self.values_font = ImageFont.truetype(self.font, 14)
 
     def get_data(self) -> Dict:
         data = {}
@@ -49,9 +53,6 @@ class HomeMonitorPage(InkyPage):
         img = super().get_image(data)
         draw = ImageDraw.Draw(img)
 
-        header_font = ImageFont.truetype(self.font, 11)
-        values_font = ImageFont.truetype(self.font, 14)
-
         # Outside weather
         weather_icon, mask = self.get_icon(data["weather"]["weather_description"])
         img.paste(weather_icon, (20, 5), mask)
@@ -59,19 +60,19 @@ class HomeMonitorPage(InkyPage):
         draw.text(
             (70, 16),
             f"{data['weather']['temperature']:.1f}˚C",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.YELLOW,
         )
         draw.text(
             (135, 16),
             f"{int(data['weather']['humidity'])}%",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.WHITE,
         )
         draw.text(
             (180, 16),
             f"{int(data['weather']['wind_speed'])}km/h",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.WHITE,
         )
 
@@ -85,19 +86,19 @@ class HomeMonitorPage(InkyPage):
         draw.text(
             (self.SUBCASE_WIDTH / 3, 55),
             "Salon",
-            font=header_font,
+            font=self.header_font,
             fill=self.inky_display.WHITE,
         )
         draw.text(
             (self.SUBCASE_WIDTH / 4, 75),
             f"{data['salon']['temperature']:.1f}˚C",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.YELLOW,
         )
         draw.text(
             (self.SUBCASE_WIDTH / 3 + 5, 95),
             f"{int(data['salon']['humidity'])}%",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.WHITE,
         )
 
@@ -110,19 +111,19 @@ class HomeMonitorPage(InkyPage):
         draw.text(
             (self.SUBCASE_WIDTH * 5 / 4, 55),
             "Cuisine",
-            font=header_font,
+            font=self.header_font,
             fill=self.inky_display.WHITE,
         )
         draw.text(
             (self.SUBCASE_WIDTH * 5 / 4, 75),
             f"{data['cuisine']['temperature']:.1f}˚C",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.YELLOW,
         )
         draw.text(
             (self.SUBCASE_WIDTH * 4 / 3 + 5, 95),
             f"{int(data['cuisine']['humidity'])}%",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.WHITE,
         )
 
@@ -141,13 +142,13 @@ class HomeMonitorPage(InkyPage):
         draw.text(
             (self.SUBCASE_WIDTH * 11 / 5, 55),
             "Elec (10m)",
-            font=header_font,
+            font=self.header_font,
             fill=self.inky_display.WHITE,
         )
         draw.text(
             (self.SUBCASE_WIDTH * 9 / 4 + 3, 85),
             f"{int(data['elec']['app_power'])} W",
-            font=values_font,
+            font=self.values_font,
             fill=self.inky_display.WHITE,
         )
 

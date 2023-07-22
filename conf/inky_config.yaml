@@ -34,7 +34,7 @@ homemonitor:
 
 dayweather:
   refresh_period: 600
-  city: "Paris, FR"
+  gps_coordinates: [48.85, 2.35]
 
 citiesweather:
   refresh_period: 1800
