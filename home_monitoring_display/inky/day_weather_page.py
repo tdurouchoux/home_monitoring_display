@@ -158,7 +158,7 @@ class DayWeatherPage(InkyPage):
                 data[f"hour_{i}_temp"],
                 data[f"hour_{i}_description"],
                 (i % 3) * (2 + self.CASE_WIDTH),
-                60 + (i // 3) * (2 + self.CASE_HEIGHT),
+                61 + (i // 3) * (2 + self.CASE_HEIGHT),
                 img,
             )
 
