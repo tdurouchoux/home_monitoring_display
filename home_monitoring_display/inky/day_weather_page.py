@@ -2,7 +2,6 @@ import os
 from typing import Dict, List
 import datetime as dt
 
-import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from inky import InkyPHAT
 import requests

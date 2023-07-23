@@ -130,7 +130,7 @@ def create_number(
     if thresholds is not None:
         thresholds = list(thresholds.items())
 
-    mean_value = influxdb_connector.query_mean_field(measurement, field, refresh_rate)
+    mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
     if math_operation is not None:
         mean_value = math_operation(mean_value)
 
@@ -143,7 +143,7 @@ def create_number(
     )
 
     def update_value():
-        mean_value = influxdb_connector.query_mean_field(
+        mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
         if math_operation is not None:
@@ -169,7 +169,7 @@ def create_gauge(
     if thresholds is not None:
         thresholds = list(thresholds.items())
 
-    mean_value = influxdb_connector.query_mean_field(measurement, field, refresh_rate)
+    mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
 
     gauge = pn.indicators.Gauge(
         name=name,
@@ -181,7 +181,7 @@ def create_gauge(
     )
 
     def update_value():
-        mean_value = influxdb_connector.query_mean_field(
+        mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
         gauge.value = int(mean_value)

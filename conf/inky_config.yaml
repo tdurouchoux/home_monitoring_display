@@ -54,12 +54,35 @@ elecconsumption:
       total_power: BASE 
 
 sysmonitor:
-  refresh_period: 300
+  refresh_period: 120
   fields_configuration:
-    # influxdb_connector: pi
-    # measurement: system_hm
-    # fields:
-    #     cpu_temp: cpu_temp
-    #     cpu_usage: cpu_usage
-    #     mem_usage: mem_usage
-    #     disk_usage: disk_usage
+    pi:
+      cpu_usage:
+        measurement: system_2
+        field: cpu_usage
+      ram_usage:
+        measurement: system_2
+        field: ram_usage
+      mem_usage: 
+        measurement: system_1
+        field: mem_usage
+        max_value: 29
+      cpu_temp: 
+        measurement: system_1
+        field: cpu_temperature
+        max_value: 85
+    homemonitor:
+      cpu_usage:
+        measurement: system_hm_2
+        field: cpu_usage
+      ram_usage:
+        measurement: system_hm_2
+        field: ram_usage
+      mem_usage: 
+        measurement: system_hm_1
+        field: mem_usage
+        max_value: 30
+      cpu_temp: 
+        measurement: system_hm_1
+        field: cpu_temperature
+        max_value: 85

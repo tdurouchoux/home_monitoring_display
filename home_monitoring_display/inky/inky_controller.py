@@ -8,13 +8,16 @@ from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display import utils
 from home_monitoring_display.inky.home_monitor_page import HomeMonitorPage
 from home_monitoring_display.inky.day_weather_page import DayWeatherPage
+from home_monitoring_display.inky.cities_weather_page import CitiesWeatherPage
+from home_monitoring_display.inky.elec_consumption_page import ElecConsumptionPage
+from home_monitoring_display.inky.sys_monitor_page import SysMonitorPage
 
 PAGES_MAPPING = {
     "homemonitor": HomeMonitorPage,
     "dayweather": DayWeatherPage,
-    # "citiesweather": inky_pages.CitiesWeatherPage,
-    # "elecconsumption": inky_pages.ElecConsumptionPage,
-    # "sysmonitor": inky_pages.SysMonitorPage,
+    "citiesweather": CitiesWeatherPage,
+    "elecconsumption": ElecConsumptionPage,
+    "sysmonitor":SysMonitorPage,
 }
 
 # ? use buttonshim led

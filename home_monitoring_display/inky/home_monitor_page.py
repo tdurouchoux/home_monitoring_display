@@ -37,7 +37,7 @@ class HomeMonitorPage(InkyPage):
             if field_cat == "elec":
                 data["elec"]["app_power"] = self.influxdb_connectors[
                     config["influxdb_connector"]
-                ].query_mean_field(
+                ].query_agg_field(
                     config["measurement"], config["fields"]["app_power"], "10m"
                 )
 

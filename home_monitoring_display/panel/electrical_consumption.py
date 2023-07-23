@@ -84,9 +84,7 @@ df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
     axis=1,
 )
 
-
 # Month selection
-
 month_list = list(
     df_papp_day.sort_values("date", ascending=True)["month_name"].unique()
 )

@@ -137,12 +137,12 @@ class InfluxDBConnector:
 
         return df_query
 
-    def query_mean_field(
-        self, measurement: str, field: str, start: str, stop: str = "now()"
+    def query_agg_field(
+        self, measurement: str, field: str, start: str, stop: str = "now()", aggregation_func: str = "mean"
     ) -> pd.DataFrame:
         self._connect()
 
-        query = f"""SELECT mean({field}) as {field}
+        query = f"""SELECT {aggregation_func}({field}) as {field}
                     FROM {measurement}
                     WHERE time > {self.convert_time_cond(start)}
                     AND time < {self.convert_time_cond(stop)}"""
