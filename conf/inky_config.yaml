@@ -37,7 +37,7 @@ dayweather:
   gps_coordinates: [48.85, 2.35]
 
 citiesweather:
-  refresh_period: 1800
+  refresh_period: 60
   cities:
     - "Carnac, FR"
     - "Peisey-Nancroix, FR"
@@ -45,7 +45,7 @@ citiesweather:
     - "New York, US"
 
 elecconsumption:
-  refresh_period: 600
+  refresh_period: 60
   fields_configuration:
     influxdb_connector: pi
     measurement: teleinfo
@@ -54,7 +54,7 @@ elecconsumption:
       total_power: BASE 
 
 sysmonitor:
-  refresh_period: 120
+  refresh_period: 60
   fields_configuration:
     pi:
       cpu_usage:
