@@ -43,12 +43,12 @@ class InfluxDBConnector:
         elif isinstance(time_cond, str):
             if time_cond == "now()":
                 return time_cond
-            elif bool(re.fullmatch(r"^\d{1,3}[a-zA-Z]$", time_cond)):
+            elif bool(re.fullmatch(r"^\d{1,4}[a-zA-Z]$", time_cond)):
                 return f"now() - {time_cond}"
 
         raise ValueError(
             f"""Invalid time condition: {time_cond}.
-                Should either be <1-3 number><letter> or be datetime."""
+                Should either be <1-4 number><letter> or be datetime."""
         )
 
     def _connect(self) -> None:
@@ -102,7 +102,7 @@ class InfluxDBConnector:
         start: str,
         stop: str = "now()",
         groupby_interval: str = None,
-        aggregation_func: str = "mean"
+        aggregation_func: str = "mean",
     ) -> pd.DataFrame:
         self._connect()
 
@@ -138,7 +138,12 @@ class InfluxDBConnector:
         return df_query
 
     def query_agg_field(
-        self, measurement: str, field: str, start: str, stop: str = "now()", aggregation_func: str = "mean"
+        self,
+        measurement: str,
+        field: str,
+        start: str,
+        stop: str = "now()",
+        aggregation_func: str = "mean",
     ) -> pd.DataFrame:
         self._connect()
 
@@ -146,18 +151,20 @@ class InfluxDBConnector:
                     FROM {measurement}
                     WHERE time > {self.convert_time_cond(start)}
                     AND time < {self.convert_time_cond(stop)}"""
-                    
+
         df_mean_query = self.client.query(query)[measurement]
         return df_mean_query.iloc[0][field]
 
     def query_last_field(
-        self, measurement, field: str,
+        self,
+        measurement,
+        field: str,
     ):
         self._connect()
-        
+
         query_last = f"""SELECT last({field}) as {field}
                 FROM {measurement}"""
-                
+
         df_query_last = self.client.query(query_last)[measurement]
-        
+
         return df_query_last.iloc[0][field]

@@ -6,6 +6,8 @@ from inky import InkyPHAT
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.inky.inky_page import InkyPage
 
+# TODO fix monitoring memory values
+
 
 def iter_list(l):
     i = 0
@@ -114,14 +116,14 @@ class SysMonitorPage(InkyPage):
             fill=self.inky_display.YELLOW,
         )
 
-    def draw_image(self, data) -> Image:
-        img = super().draw_image(data)
+    def get_image(self, data) -> Image:
+        img = super().get_image(data)
         draw = ImageDraw.Draw(img)
 
         draw.text(
             (62 - 3 * len(data["connector_name"]), 2),
             f"System monitoring {data['connector_name']}",
-            font=self.font_title,
+            font=self.title_font,
             fill=self.inky_display.WHITE,
         )
         draw.line(
@@ -131,18 +133,18 @@ class SysMonitorPage(InkyPage):
         )
 
         self.draw_metric_monitor(
-            "CPU (10m)", data["cpu_usage_10m_avg"], self.CIRCLE_SPACING, 43, draw
+            "CPU (10m)", round(data["cpu_usage_10m_avg"]), self.CIRCLE_SPACING, 43, draw
         )
         self.draw_metric_monitor(
             "RAM (10m)",
-            data["ram_usage_10m_avg"],
+            round(data["ram_usage_10m_avg"]),
             2 * self.CIRCLE_SPACING + self.CIRCLE_DIAMETER,
             43,
             draw,
         )
         self.draw_metric_monitor(
             "Memory",
-            data["mem_usage"],
+            round(data["mem_usage"]),
             2 * self.CIRCLE_DIAMETER + 3 * self.CIRCLE_SPACING,
             43,
             draw,
@@ -151,7 +153,7 @@ class SysMonitorPage(InkyPage):
         )
         self.draw_metric_monitor(
             "Temp",
-            data["cpu_temp"],
+            round(data["cpu_temp"]),
             3 * (self.CIRCLE_DIAMETER + 2 * self.CIRCLE_SPACING),
             43,
             draw,

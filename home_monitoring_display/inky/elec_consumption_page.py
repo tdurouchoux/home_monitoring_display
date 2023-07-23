@@ -11,6 +11,7 @@ from home_monitoring_display.inky.inky_page import InkyPage
 class ElecConsumptionPage(InkyPage):
     WEEK_PRICE = 0.2352
     WEEKEND_PRICE = 0.1650
+    LINE_GROUP_INTER = "5m"
 
     def __init__(
         self,
@@ -41,7 +42,7 @@ class ElecConsumptionPage(InkyPage):
 
         # Instant power
         df_hour_consumption = connector.query_field(
-            measurement, app_power_field, "1h", groupby_interval="10m"
+            measurement, app_power_field, "1h", groupby_interval=self.LINE_GROUP_INTER
         )
         df_hour_consumption = df_hour_consumption.sort_values("_time", ascending=True)
         data[f"line_consumption"] = [
@@ -51,16 +52,12 @@ class ElecConsumptionPage(InkyPage):
         # Power consumption
         day_minutes = dt.datetime.now().hour * 60 + dt.datetime.now().minute
         min_day_power = connector.query_agg_field(
-            measurement, app_power_field, f"{day_minutes}m", aggregation_func="min"
-        )
-        min_10m_power = connector.query_agg_field(
-            measurement, app_power_field, "10m", aggregation_func="min"
+            measurement, total_power_field, f"{day_minutes}m", aggregation_func="min"
         )
         last_power = connector.query_last_field(measurement, total_power_field)
 
-        data["last_10m_consumption"] = last_power - min_10m_power
         data["day_consumption"] = (last_power - min_day_power) / 1000
-        data["day_price"] = round(
+        data["day_price"] = (
             data["day_consumption"] * self.WEEK_PRICE
             if dt.date.today().weekday() < 5
             else data["day_consumption"] * self.WEEKEND_PRICE
@@ -124,20 +121,20 @@ class ElecConsumptionPage(InkyPage):
             font=self.header_font,
             fill=self.inky_display.WHITE,
         )
-        
+
         # Last hour consumption
         self.draw_line_graph(data["line_consumption"], 70, 80, 10, 35, draw)
 
         # Last 10 minutes consumption
         draw.text(
-            (92, 50),
-            "-10 min:",
+            (88, 50),
+            f"avg(-{self.LINE_GROUP_INTER}):",
             font=self.header_font,
             fill=self.inky_display.WHITE,
         )
         draw.text(
-            (92, 75),
-            f"{data['last_10m_consumption']} Wh",
+            (100, 75),
+            f"{round(data['line_consumption'][-1])} W",
             font=self.value_font,
             fill=self.inky_display.YELLOW,
         )
@@ -149,7 +146,7 @@ class ElecConsumptionPage(InkyPage):
             (186, 27), "Today:", font=self.header_font, fill=self.inky_display.WHITE
         )
         draw.text(
-            (180, 50),
+            (172, 50),
             f"{data['day_consumption']:.3f} kWh",
             font=self.value_font,
             fill=self.inky_display.YELLOW,

@@ -17,7 +17,7 @@ PAGES_MAPPING = {
     "dayweather": DayWeatherPage,
     "citiesweather": CitiesWeatherPage,
     "elecconsumption": ElecConsumptionPage,
-    "sysmonitor":SysMonitorPage,
+    "sysmonitor": SysMonitorPage,
 }
 
 # ? use buttonshim led
@@ -62,7 +62,7 @@ def press_e(button, pressed):
     next_page = "sysmonitor"
 
 
-next_page = "dayweather"
+next_page = "elecconsumption"
 stop_refresh = False
 config_file = "conf/inky_config.yaml"
 connectors_config_file = "conf/connectors_config.yaml"

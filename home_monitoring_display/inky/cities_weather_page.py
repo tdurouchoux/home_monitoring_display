@@ -11,7 +11,7 @@ from home_monitoring_display.inky.inky_page import InkyPage
 # TODO handle failed requests
 
 
-class DayWeatherPage(InkyPage):
+class CitiesWeatherPage(InkyPage):
     CASE_HEIGHT = 28
     CASE_WIDTH = 81
     RAIN_WIDTH = 20
@@ -57,7 +57,10 @@ class DayWeatherPage(InkyPage):
 
             result = response.json()
 
-            data[city]["name"] = result["name"]
+            if len(result["name"]) < len(city):
+                data[city]["name"] = result["name"]
+            else:
+                data[city]["name"] = city
             data[city]["weather_description"] = result["weather"][0]["description"]
             data[city]["temperature"] = result["main"]["temp"]
             data[city]["humidity"] = result["main"]["humidity"]
@@ -101,10 +104,28 @@ class DayWeatherPage(InkyPage):
     def get_image(self, data) -> Image:
         img = super().get_image(data)
         draw = ImageDraw.Draw(img)
-        
-        draw.line((5, self.inky_display.HEIGHT / 2, self.inky_display.WIDTH -5, self.inky_display.HEIGHT / 2), fill=self.inky_display.WHITE, width=2)
-        draw.line((self.inky_display.WIDTH / 2, 5, self.inky_display.WIDTH / 2, self.inky_display.HEIGHT - 5), fill=self.inky_display.WHITE, width=2)
-        
+
+        draw.line(
+            (
+                5,
+                self.inky_display.HEIGHT / 2,
+                self.inky_display.WIDTH - 5,
+                self.inky_display.HEIGHT / 2,
+            ),
+            fill=self.inky_display.WHITE,
+            width=2,
+        )
+        draw.line(
+            (
+                self.inky_display.WIDTH / 2,
+                5,
+                self.inky_display.WIDTH / 2,
+                self.inky_display.HEIGHT - 5,
+            ),
+            fill=self.inky_display.WHITE,
+            width=2,
+        )
+
         for i, city in enumerate(self.cities):
             self.draw_city_meteo(
                 data[city]["name"],
@@ -113,7 +134,7 @@ class DayWeatherPage(InkyPage):
                 data[city]["weather_description"],
                 (i % 2) * int((self.inky_display.WIDTH / 2) + 1),
                 (i // 2) * int((self.inky_display.HEIGHT / 2) + 1),
-                img
+                img,
             )
-        
+
         return img
