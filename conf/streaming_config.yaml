@@ -49,25 +49,26 @@ layouts:
     indicators:
       - type: number
         name: "Température"
-        measurement: sensorhub
-        field: TempOffchip
+        measurement: bme280
+        field: temperature
         refresh_rate: 120s
         thresholds: *temperature_thresholds
         string_format: "{value:.1f}°C"
       - type: gauge
         name: "Humidité"
-        measurement: sensorhub
-        field: Humidity
+        measurement: bme280
+        field: humidity
         refresh_rate: 120s
         bounds: [0, 100]
         thresholds: *humidity_thresholds
         format_suffix: "%"
       - type: number
         name: Pression
-        measurement: sensorhub
-        field: Pressure
+        measurement: bme280
+        field: pressure
         refresh_rate: 120s
         string_format: "{value:.4f} Bar"
+        math_operation: !math_op ["/", 1000]
   - title: "Capteurs salon"
     influxdb_connector: homemonitor
     indicators:
@@ -101,10 +102,6 @@ layouts:
   - title: "Météo extérieur"
     influxdb_connector: homemonitor
     indicators:
-      - type: weather_icon
-        measurement: openweather_current_weather
-        field: weather_description
-        refresh_rate: 10m
       - type: number
         name: "Température"
         measurement: openweather_current_weather
@@ -127,5 +124,9 @@ layouts:
         refresh_rate: 10m
         string_format: "{value:.1f} km/h"
         math_operation: !math_op ["*", 3.6]
+      - type: weather_icon
+        measurement: openweather_current_weather
+        field: weather_description
+        refresh_rate: 10m
 
       
