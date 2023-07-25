@@ -8,7 +8,9 @@ from home_monitoring_display.utils import load_config
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.panel import indicator_factory
 
-conf_directory = Path(__file__).parent.parent.joinpath("conf")
+# TODO Clean all this shit
+
+conf_directory = Path(__file__).parent.parent.parent.joinpath("conf")
 
 conf = load_config(conf_directory.joinpath("streaming_config.yaml"))
 connectors_conf = load_config(conf_directory.joinpath("connectors_config.yaml"))
@@ -62,7 +64,7 @@ for layout_config in conf["layouts"]:
             title=layout_config["title"],
             sizing_mode="stretch_both",
             collapsible=False,
-            background="#e6ebfc"
+            background="#e6ebfc",
         )
     )
 
