@@ -14,7 +14,9 @@ from home_monitoring_display.utils import load_config
 from home_monitoring_display.influxdb.multi_view_connector import MultiViewConnector
 
 conf = load_config(
-    Path(__file__).parent.parent.joinpath("conf").joinpath("connectors_config.yaml")
+    Path(__file__)
+    .parent.parent.parent.joinpath("conf")
+    .joinpath("connectors_config.yaml")
 )
 
 pi_config = conf["pi"]

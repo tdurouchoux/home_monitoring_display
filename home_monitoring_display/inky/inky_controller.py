@@ -23,6 +23,7 @@ PAGES_MAPPING = {
 # ? use buttonshim led
 
 # TODO Fix long press
+# TODO Clean this and add logging
 
 
 @buttonshim.on_press(buttonshim.BUTTON_A)
@@ -64,7 +65,7 @@ def press_e(button, pressed):
     next_page = "sysmonitor"
 
 
-next_page = "elecconsumption"
+next_page = "homemonitor"
 stop_refresh = False
 config_file = "conf/inky_config.yaml"
 connectors_config_file = "conf/connectors_config.yaml"
