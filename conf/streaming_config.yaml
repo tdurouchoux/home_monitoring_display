@@ -20,6 +20,7 @@ outside_temperature_thresholds: &outside_temperature_thresholds
   100: red
 
 indicators_parameters:
+  window_size: 10m
 
 layouts:
   - title: "Consommation électricité"

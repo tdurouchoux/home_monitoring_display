@@ -9,9 +9,9 @@ import hvplot.pandas
 import panel as pn
 from panel.interact import interact
 
-from home_monitoring_display.query_influxdb import InfluxDBConnector
+from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.utils import load_config
-from home_monitoring_display.multi_view_connector import MultiViewConnector
+from home_monitoring_display.influxdb.multi_view_connector import MultiViewConnector
 
 conf = load_config(
     Path(__file__).parent.parent.joinpath("conf").joinpath("connectors_config.yaml")

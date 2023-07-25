@@ -7,8 +7,11 @@ import panel as pn
 import hvplot.pandas
 import matplotlib.pyplot as plt
 
-from home_monitoring_display.query_influxdb import InfluxDBConnector
+from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.utils import load_config
+
+# TODO Add a cache functionality to speed up queries
+# TODO Refactor and clean this
 
 # TODO Change calendar plot to matplotlib
 # TODO Use for grid and other plots 
@@ -81,9 +84,7 @@ df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
     axis=1,
 )
 
-
 # Month selection
-
 month_list = list(
     df_papp_day.sort_values("date", ascending=True)["month_name"].unique()
 )
