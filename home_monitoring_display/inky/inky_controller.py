@@ -22,6 +22,8 @@ PAGES_MAPPING = {
 
 # ? use buttonshim led
 
+# TODO Fix long press
+
 
 @buttonshim.on_press(buttonshim.BUTTON_A)
 def press_a(button, pressed):
