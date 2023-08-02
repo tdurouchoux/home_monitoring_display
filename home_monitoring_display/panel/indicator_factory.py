@@ -99,7 +99,7 @@ def create_trend(
         data=df_init,
         plot_x="_time",
         plot_y=field,
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         plot_type="area",
     )
 
@@ -138,7 +138,7 @@ def create_number(
         name=name,
         value=mean_value,
         format=string_format,
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         colors=thresholds,
     )
 
@@ -176,7 +176,7 @@ def create_gauge(
         value=int(mean_value),
         format="{value}" + format_suffix,
         bounds=tuple(bounds),
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         colors=thresholds,
     )
 
@@ -218,10 +218,10 @@ def create_weather_icon(
         icon_url(weather_description),
         max_height=400,
         max_width=400,
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
     )
     text_description = pn.widgets.StaticText(
-        value=f"<h1>{weather_description}</h1>", align="center"
+        value=f"<h2>{weather_description}</h2>", align="center"
     )
 
     weather_icon = pn.Column(pane_image, text_description)

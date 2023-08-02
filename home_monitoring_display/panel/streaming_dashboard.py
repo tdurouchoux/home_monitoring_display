@@ -61,15 +61,16 @@ for layout_config in conf["layouts"]:
     layout_list.append(
         pn.Card(
             pn.Row(*indicator_list),
-            title=layout_config["title"],
-            sizing_mode="stretch_both",
+            header=pn.widgets.StaticText(
+                value=f"<h1>{layout_config['title']}</h1>", align="center"
+            ),
+            sizing_mode="stretch_width",
             collapsible=False,
-            background="#e6ebfc",
+            styles={"background": "#e6ebfc"},
         )
     )
 
-
 template = pn.template.FastListTemplate(
-    title=conf["title"], main=layout_list, main_layout=""
+    title=conf["title"], main=layout_list, main_layout=None
 )
 template.servable()

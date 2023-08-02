@@ -68,7 +68,7 @@ def plot_measures(measures, group_plots, date_range):
     stop = pd.Timestamp(date_range[1]).replace(tzinfo=connector.timezone)
 
     if len(measures) == 0:
-        return pn.pane.Markdown("##No measures Selected")
+        return pn.pane.Markdown("## No measures Selected")
     elif len(measures) == 1:
         return pn.pane.HoloViews(
             connector.query_measure(
