@@ -19,14 +19,16 @@ conf = load_config(
     .joinpath("connectors_config.yaml")
 )
 
-pi_config = conf["pi"]
-pi_config["timeout"] = 100_000
-pi_config["default_group_measurement"] = {"teleinfo": "30s"}
+# TODO Fix this shit
+
+# pi_config = conf["pi"]
+# pi_config["timeout"] = 100_000
+# pi_config["default_group_measurement"] = {"teleinfo": "30s"}
 
 hm_client = InfluxDBConnector(**conf["homemonitor"])
-pi_client = InfluxDBConnector(**pi_config)
-connector = MultiViewConnector(hm_client, pi_client)
-
+# pi_client = InfluxDBConnector(**pi_config)
+# connector = MultiViewConnector(hm_client, pi_client)
+connector = MultiViewConnector(hm_client)
 # Setup widgets
 
 measure_options = connector.get_measure_options(
@@ -49,7 +51,8 @@ end_date = end_date.replace(tzinfo=None)
 
 datetime_range_picker = pn.widgets.DatetimeRangePicker(
     name="Période temporelle",
-    value=(end_date - dt.timedelta(days=2), end_date),
+    # value=(end_date - dt.timedelta(days=2), end_date),
+    value=(end_date - dt.timedelta(minutes=20), end_date),
     start=start_date,
     end=end_date,
 )
