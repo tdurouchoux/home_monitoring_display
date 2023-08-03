@@ -216,8 +216,8 @@ def create_weather_icon(
 
     pane_image = pn.pane.PNG(
         icon_url(weather_description),
-        max_height=400,
-        max_width=400,
+        max_height=350,
+        max_width=350,
         sizing_mode="stretch_width",
     )
     text_description = pn.widgets.StaticText(
