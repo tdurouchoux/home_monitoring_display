@@ -16,7 +16,9 @@ class MultiViewConnector:
             for measurement, measurement_schema in connector_schema.items():
                 self.schema[(connector_name, measurement)] = measurement_schema
 
-        self.timezone = pytz.timezone(list(self.influxdb_connectors.values())[0].timezone)
+        self.timezone = pytz.timezone(
+            list(self.influxdb_connectors.values())[0].timezone
+        )
         self._cached_queries = {}
 
     def get_first_date(self):
@@ -43,10 +45,13 @@ class MultiViewConnector:
 
         influxdb_connector = self.influxdb_connectors[connector_name]
 
-        if measurement not in self._cached_queries:
-            self._cached_queries[measurement] = dict()
+        if connector_name not in self._cached_queries:
+            self._cached_queries[connector_name] = dict()
 
-        if field not in self._cached_queries[measurement]:
+        if measurement not in self._cached_queries[connector_name]:
+            self._cached_queries[connector_name][measurement] = dict()
+
+        if field not in self._cached_queries[connector_name][measurement]:
             # Retrieve data from influxdb
             df_query = influxdb_connector.query_field(
                 measurement, field, start, stop=stop
@@ -55,11 +60,11 @@ class MultiViewConnector:
 
             field_cache = {"cache": df_query, "start": start, "stop": stop}
 
-            self._cached_queries[measurement][field] = field_cache
+            self._cached_queries[connector_name][measurement][field] = field_cache
             return df_query
         else:
             # Retrieve data from cache
-            field_cache = self._cached_queries[measurement][field]
+            field_cache = self._cached_queries[connector_name][measurement][field]
 
             cached_start = field_cache["start"]
             cached_stop = field_cache["stop"]
