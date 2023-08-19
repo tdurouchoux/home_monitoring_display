@@ -7,18 +7,23 @@ import panel as pn
 import hvplot.pandas
 import matplotlib.pyplot as plt
 
-from home_monitoring_display.query_influxdb import InfluxDBConnector
+from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.utils import load_config
 
+# TODO Add a cache functionality to speed up queries
+# TODO Refactor and clean this
+
 # TODO Change calendar plot to matplotlib
-# TODO Use for grid and other plots 
+# TODO Use for grid and other plots
 # TODO Add tabs
 
 
 # Get data
 
 conf = load_config(
-    Path(__file__).parent.parent.joinpath("conf").joinpath("connectors_config.yaml")
+    Path(__file__)
+    .parent.parent.parent.joinpath("conf")
+    .joinpath("connectors_config.yaml")
 )
 
 pi_config = conf["pi"]
@@ -52,10 +57,7 @@ df_base = pi_client.query_field(
     "teleinfo", "BASE", start_date, groupby_interval="1h", aggregation_func="min"
 )
 
-current_price = {
-    "week": 0.2352,
-    "weekend": 0.1650
-}
+current_price = {"week": 0.2352, "weekend": 0.1650}
 
 df_base["date"] = df_base._time.dt.date
 df_base_day = df_base.groupby("date").agg({"BASE": "min"}).reset_index()
@@ -64,14 +66,14 @@ df_base_day["day_of_week"] = df_base_day.date.apply(lambda d: d.weekday())
 df_base_day["month_name"] = df_base_day.date.apply(lambda d: d.strftime("%B %Y"))
 
 query_max = f"SELECT last(BASE) AS BASE FROM teleinfo"
-max_base = pi_client.client.query(query_max)['teleinfo']['BASE'].values[0]
+max_base = pi_client.client.query(query_max)["teleinfo"]["BASE"].values[0]
 
 df_base_day_shift = df_base_day.BASE.shift(-1)
 df_base_day_shift.iloc[-1] = max_base
 
 
 df_base_day["energy_consumption"] = df_base_day_shift - df_base_day.BASE
-    
+
 df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
     lambda row: (
         row["energy_consumption"] * current_price["week"] / 1000
@@ -81,9 +83,7 @@ df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
     axis=1,
 )
 
-
 # Month selection
-
 month_list = list(
     df_papp_day.sort_values("date", ascending=True)["month_name"].unique()
 )
@@ -92,6 +92,7 @@ select_month = pn.widgets.Select(name="Month", options=month_list)
 
 
 # Distribution tab
+
 
 def plot_distrib_bar(df, group, sort_key, title):
     return (
@@ -174,6 +175,7 @@ distributions = pn.Column(
 
 
 # Consumption
+
 
 @pn.depends(select_month=select_month)
 def get_consumption(select_month):

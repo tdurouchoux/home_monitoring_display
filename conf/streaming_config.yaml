@@ -1,4 +1,4 @@
-title: "Home monitoring"
+title: "Maison Carnac"
 
 temperature_thresholds: &temperature_thresholds
   18: blue
@@ -19,68 +19,44 @@ outside_temperature_thresholds: &outside_temperature_thresholds
   25: orange
   100: red
 
+cpu_thresholds: &cpu_thresholds
+  0.2: blue
+  0.4: green
+  0.6: yellow
+  0.8: orange
+  1: red 
+
+pi_temp_thresholds: &pi_temp_thresholds
+  0.3: blue
+  0.5: green
+  0.7: yellow
+  0.9: orange
+  1: red
+
+memory_thresholds: &memory_thresholds
+  0.2: blue
+  0.4: green
+  0.6: yellow
+  0.8: orange
+  1: red 
+
 indicators_parameters:
+  window_size: 10m
 
 layouts:
-  - title: "Consommation électricité"
-    influxdb_connector: pi
-    indicators:
-      - type: trend
-        title: "Puissance apparente (W)"
-        measurement: teleinfo
-        field: PAPP
-        refresh_rate: 5s
-        window_size: 10m
-      - type: trend
-        title: "Courant instantané (A)"
-        measurement: teleinfo
-        field: IINST
-        refresh_rate: 5s
-        window_size: 10m
-      - type: number
-        name: "Consommation totale"
-        measurement: teleinfo
-        field: BASE
-        refresh_rate: 5m
-        string_format: "{value:,.0f} kWh"
-        math_operation: !math_op ["/", 1000]
-  - title: "Capteurs cuisine"
-    influxdb_connector: pi
-    indicators:
-      - type: number
-        name: "Température"
-        measurement: sensorhub
-        field: TempOffchip
-        refresh_rate: 120s
-        thresholds: *temperature_thresholds
-        string_format: "{value:.1f}°C"
-      - type: gauge
-        name: "Humidité"
-        measurement: sensorhub
-        field: Humidity
-        refresh_rate: 120s
-        bounds: [0, 100]
-        thresholds: *humidity_thresholds
-        format_suffix: "%"
-      - type: number
-        name: Pression
-        measurement: sensorhub
-        field: Pressure
-        refresh_rate: 120s
-        string_format: "{value:.4f} Bar"
   - title: "Capteurs salon"
     influxdb_connector: homemonitor
     indicators:
       - type: number
         name: "Température"
-        measurement: bme688
+        measurement: bme280
         field: temperature
         refresh_rate: 120s
         thresholds: *temperature_thresholds
         string_format: "{value:.1f}°C"
       - type: gauge
         name: "Humidité"
-        measurement: bme688
+        measurement: bme280
         field: humidity
         refresh_rate: 120s
         bounds: [0, 100]
@@ -88,23 +64,39 @@ layouts:
         format_suffix: "%"
       - type: number
         name: Pression
-        measurement: bme688
+        measurement: bme280
         field: pressure
         refresh_rate: 120s
         string_format: "{value:.4f} Bar"
         math_operation: !math_op ["/", 1000]
-      # - type: trend
-      #   title: "Indicateur qualité air"
-      #   measurement: bme688
-      #   field: gas_resistance
-      #   refresh_rate: 60s
+  - title: "Capteurs chambre Thibault"
+    influxdb_connector: pizero
+    indicators:
+      - type: number
+        name: "Température"
+        measurement: bme280
+        field: temperature
+        refresh_rate: 120s
+        thresholds: *temperature_thresholds
+        string_format: "{value:.1f}°C"
+      - type: gauge
+        name: "Humidité"
+        measurement: bme280
+        field: humidity
+        refresh_rate: 120s
+        bounds: [0, 100]
+        thresholds: *humidity_thresholds
+        format_suffix: "%"
+      - type: number
+        name: Pression
+        measurement: bme280
+        field: pressure
+        refresh_rate: 120s
+        string_format: "{value:.4f} Bar"
+        math_operation: !math_op ["/", 1000]
   - title: "Météo extérieur"
     influxdb_connector: homemonitor
     indicators:
-      - type: weather_icon
-        measurement: openweather_current_weather
-        field: weather_description
-        refresh_rate: 10m
       - type: number
         name: "Température"
         measurement: openweather_current_weather
@@ -127,5 +119,65 @@ layouts:
         refresh_rate: 10m
         string_format: "{value:.1f} km/h"
         math_operation: !math_op ["*", 3.6]
+      - type: weather_icon
+        measurement: openweather_current_weather
+        field: weather_description
+        refresh_rate: 10m
+
+  - title: "Pi salon"
+    influxdb_connector: homemonitor
+    indicators:
+      - type: gauge
+        name: "CPU"
+        measurement: system_hm_2
+        field: cpu_usage
+        refresh_rate: 1m
+        bounds: [0, 100]
+        thresholds: *cpu_thresholds
+        format_suffix: "%"
+      - type: gauge
+        name: "Temperature"
+        measurement: system_hm_1
+        field: cpu_temperature
+        refresh_rate: 1m
+        bounds: [20, 85]
+        thresholds: *pi_temp_thresholds
+        format_suffix: "°C"
+      - type: gauge
+        name: "Stockage"
+        measurement: system_hm_1
+        field: memory_usage
+        refresh_rate: 30m
+        bounds: [0, 100]
+        thresholds: *memory_thresholds
+        format_suffix: "%"
+  - title: "Pi chambre Thibault"
+    influxdb_connector: pizero
+    indicators:
+      - type: gauge
+        name: "CPU"
+        measurement: system_hm_2
+        field: cpu_usage
+        refresh_rate: 1m
+        bounds: [0, 100]
+        thresholds: *cpu_thresholds
+        format_suffix: "%"
+      - type: gauge
+        name: "Temperature"
+        measurement: system_hm_1
+        field: cpu_temperature
+        refresh_rate: 1m
+        bounds: [20, 85]
+        thresholds: *pi_temp_thresholds
+        format_suffix: "°C"
+      - type: gauge
+        name: "Stockage"
+        measurement: system_hm_1
+        field: memory_usage
+        refresh_rate: 30m
+        bounds: [0, 100]
+        thresholds: *memory_thresholds
+        format_suffix: "%"
+
 
       

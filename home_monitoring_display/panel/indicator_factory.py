@@ -3,7 +3,7 @@ import datetime as dt
 
 import panel as pn
 
-from home_monitoring_display.query_influxdb import InfluxDBConnector
+from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 
 TIME_IND_MULT = {
     "w": 7 * 24 * 60 * 60 * 1000,
@@ -99,7 +99,7 @@ def create_trend(
         data=df_init,
         plot_x="_time",
         plot_y=field,
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         plot_type="area",
     )
 
@@ -130,7 +130,7 @@ def create_number(
     if thresholds is not None:
         thresholds = list(thresholds.items())
 
-    mean_value = influxdb_connector.query_mean_field(measurement, field, refresh_rate)
+    mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
     if math_operation is not None:
         mean_value = math_operation(mean_value)
 
@@ -138,12 +138,12 @@ def create_number(
         name=name,
         value=mean_value,
         format=string_format,
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         colors=thresholds,
     )
 
     def update_value():
-        mean_value = influxdb_connector.query_mean_field(
+        mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
         if math_operation is not None:
@@ -169,19 +169,19 @@ def create_gauge(
     if thresholds is not None:
         thresholds = list(thresholds.items())
 
-    mean_value = influxdb_connector.query_mean_field(measurement, field, refresh_rate)
+    mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
 
     gauge = pn.indicators.Gauge(
         name=name,
         value=int(mean_value),
         format="{value}" + format_suffix,
         bounds=tuple(bounds),
-        sizing_mode="stretch_both",
+        sizing_mode="stretch_width",
         colors=thresholds,
     )
 
     def update_value():
-        mean_value = influxdb_connector.query_mean_field(
+        mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
         gauge.value = int(mean_value)
@@ -216,12 +216,12 @@ def create_weather_icon(
 
     pane_image = pn.pane.PNG(
         icon_url(weather_description),
-        max_height=400,
-        max_width=400,
-        sizing_mode="stretch_both",
+        max_height=350,
+        max_width=350,
+        sizing_mode="stretch_width",
     )
     text_description = pn.widgets.StaticText(
-        value=f"<h1>{weather_description}</h1>", align="center"
+        value=f"<h2>{weather_description}</h2>", align="center"
     )
 
     weather_icon = pn.Column(pane_image, text_description)
