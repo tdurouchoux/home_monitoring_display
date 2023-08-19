@@ -21,7 +21,7 @@ def get_date_range(date_range, first_date):
     return {"value": date_range}
 
 
-# not used 
+# not used
 # TODO must interact with cache
 def get_groupby_interval(start, stop):
     time_delta = stop - start
@@ -44,21 +44,24 @@ def plot_measures(multi_view_connector, measures, group_plots, date_range):
 
     if len(measures) == 1:
         return pn.pane.HoloViews(
-            multi_view_connector.query_measure(
-                *measures[0], start=start, stop=stop
-            ).hvplot(x="_time"),
+            multi_view_connector.query_measure(*measures[0][1:], start=start, stop=stop)
+            .rename(
+                columns={measures[0][3]: " ".join((measures[0][0], measures[0][3]))}
+            )
+            .hvplot(x="_time"),
             sizing_mode="stretch_both",
         )
 
     list_plots = [
-        multi_view_connector.query_measure(*measure, start=start, stop=stop).hvplot(
-            x="_time", responsive=True
-        )
+        multi_view_connector.query_measure(*measure[1:], start=start, stop=stop)
+        .rename(columns={measure[3]: " ".join((measure[0], measure[3]))})
+        .hvplot(x="_time", responsive=True)
         for measure in measures
     ]
     if group_plots:
         return pn.pane.HoloViews(
-            reduce(lambda x, y: x * y, list_plots), sizing_mode="stretch_both"
+            reduce(lambda x, y: x * y, list_plots).opts(show_legend=True),
+            sizing_mode="stretch_both",
         )
     else:
         return pn.pane.HoloViews(
@@ -96,6 +99,7 @@ def build_dashboard():
             "2 heures": (last_date - dt.timedelta(hours=2), last_date),
             "12 heures": (last_date - dt.timedelta(hours=12), last_date),
             "1 jour": (last_date - dt.timedelta(days=1), last_date),
+            "2 jours": (last_date - dt.timedelta(days=2), last_date),
             "1 semaine": (last_date - dt.timedelta(days=7), last_date),
             "1 mois": (last_date - dt.timedelta(days=30), last_date),
             "Tout": (first_date, last_date),
@@ -116,6 +120,7 @@ def build_dashboard():
 
     measures_options = {
         " | ".join((analytics_conf[connector_name]["measures"][measurement], field)): (
+            analytics_conf[connector_name]["measures"][measurement],
             connector_name,
             measurement,
             field,
