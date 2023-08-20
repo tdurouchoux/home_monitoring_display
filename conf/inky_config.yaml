@@ -7,7 +7,7 @@ homemonitor:
   refresh_period: 600
   fields_configuration: 
     weather:
-      influxdb_connector: homemonitor
+      influxdb_connector: homemaster
       measurement: openweather_current_weather
       fields:
         temperature: temp
@@ -15,7 +15,7 @@ homemonitor:
         wind_speed: wind_speed
         weather_description: weather_description
     salon:
-      influxdb_connector: homemonitor
+      influxdb_connector: homemaster
       measurement: bme688
       fields: 
         temperature: temperature
@@ -71,7 +71,7 @@ sysmonitor:
         measurement: system_1
         field: cpu_temperature
         max_value: 85
-    homemonitor:
+    homemaster:
       cpu_usage:
         measurement: system_hm_2
         field: cpu_usage
