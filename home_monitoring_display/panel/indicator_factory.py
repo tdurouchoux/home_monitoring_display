@@ -73,6 +73,8 @@ MAPPING_ICON_ID = {
 }
 
 
+TREND_HEIGHT = 300
+
 def strtime_to_ms(strtime: str) -> int:
     number = int(strtime[:-1])
     time_ind = strtime[-1]
@@ -82,6 +84,8 @@ def strtime_to_ms(strtime: str) -> int:
 
     return number * TIME_IND_MULT[time_ind]
 
+
+# TODO Fix trend indicator
 
 def create_trend(
     influxdb_connector: InfluxDBConnector,
@@ -95,11 +99,12 @@ def create_trend(
     nb_measures = df_init.shape[0]
 
     trend = pn.indicators.Trend(
-        title=title,
+        name=title,
         data=df_init,
         plot_x="_time",
         plot_y=field,
         sizing_mode="stretch_width",
+        height=TREND_HEIGHT,
         plot_type="area",
     )
 

@@ -38,7 +38,7 @@ class MultiViewConnector:
         )
 
     def query_measure(
-        self, connector_name: str, measurement: str, field: str, start: str, stop: str
+        self, connector_name: str, measurement: str, field: str, groupby_interval: str, start: str, stop: str
     ) -> pd.DataFrame:
         start = start.replace(tzinfo=self.timezone)
         stop = stop.replace(tzinfo=self.timezone)
@@ -50,21 +50,24 @@ class MultiViewConnector:
 
         if measurement not in self._cached_queries[connector_name]:
             self._cached_queries[connector_name][measurement] = dict()
-
+            
         if field not in self._cached_queries[connector_name][measurement]:
+            self._cached_queries[connector_name][measurement][field] = dict()
+
+        if groupby_interval not in self._cached_queries[connector_name][measurement][field]:
             # Retrieve data from influxdb
             df_query = influxdb_connector.query_field(
-                measurement, field, start, stop=stop
+                measurement, field, start, stop=stop, groupby_interval=groupby_interval
             )
             # start and stop must be local time timezone unaware datetime
 
             field_cache = {"cache": df_query, "start": start, "stop": stop}
 
-            self._cached_queries[connector_name][measurement][field] = field_cache
+            self._cached_queries[connector_name][measurement][field][groupby_interval] = field_cache
             return df_query
         else:
             # Retrieve data from cache
-            field_cache = self._cached_queries[connector_name][measurement][field]
+            field_cache = self._cached_queries[connector_name][measurement][field][groupby_interval]
 
             cached_start = field_cache["start"]
             cached_stop = field_cache["stop"]

@@ -10,8 +10,7 @@ from home_monitoring_display.utils import extract_configs
 from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.panel import indicator_factory
 
-# TODO Clean all this shit
-
+# TODO: make it work even with one sensor unavailable
 
 def construct_row(influxdb_connector: InfluxDBConnector, indicators_layout: List[Dict]) -> List:
     row_layout = []
@@ -50,6 +49,7 @@ def construct_row(influxdb_connector: InfluxDBConnector, indicators_layout: List
                 f"Indicator type should either be 'trend' or 'number', got : {indicator_config['type']}"
             )
 
+    
     return row_layout
 
 
@@ -81,10 +81,11 @@ def build_dashboard():
                     value=f"<h1>{row_config['title']}</h1>", align="center"
                 ),
                 sizing_mode="stretch_width",
-                collapsible=False,
+                collapsible=True,
                 styles={"background": "#e6ebfc"},
             )
         )
+
 
     dashboard = pn.template.FastListTemplate(
         title=layout_conf["title"], main=layout_list, main_layout=None

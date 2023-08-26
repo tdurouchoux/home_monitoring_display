@@ -1,0 +1,16 @@
+data_dir: &DATA_DIR data
+
+influxdb_connector: pi
+measurement: teleinfo
+
+data: 
+  papp:
+    field: PAPP
+    file: !path_join [*DATA_DIR, "teleinfo_papp.parquet"]
+  base:
+    field: BASE
+    file: !path_join [*DATA_DIR, "teleinfo_base.parquet"]
+
+price:
+  weekend: 0.1650
+  week: 0.2352

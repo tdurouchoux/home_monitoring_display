@@ -52,11 +52,11 @@ rpi-gpio = "^0.7.1"
 [[tool.poetry.source]]
 name = "piwheels"
 url = "https://www.piwheels.org/simple"
-priority = 'default'
+priority = 'primary'
 
 [[tool.poetry.source]]
 name = "PyPI"
-priority = 'primary'
+priority = 'default'
 
 [build-system]
 requires = ["poetry-core"]
