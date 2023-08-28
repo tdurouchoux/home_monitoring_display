@@ -28,6 +28,113 @@ PAPP_FIELD = "PAPP"
 BASE_FIELD = "BASE"
 
 
+def get_papp(influxdb_client: InfluxDBConnector, papp_cache_file: str) -> pd.DataFrame:
+    if Path(papp_cache_file).exists():
+        df_papp_old = pd.read_parquet(papp_cache_file)
+
+        start_date = df_papp_old._time.max()
+        df_papp_old = df_papp_old[df_papp_old._time < start_date]
+    else:
+        start_date = influxdb_client.query_time_field(
+            MEASUREMENT, PAPP_FIELD, func="first"
+        )
+        df_papp_old = pd.DataFrame()
+
+    # Query papp field
+    df_papp = influxdb_client.query_field(
+        MEASUREMENT,
+        PAPP_FIELD,
+        start_date,
+        groupby_interval="1h",
+        aggregation_func="mean",
+    )
+
+    # Get time features
+    df_papp["day"] = df_papp._time.dt.day
+    df_papp["day_of_week"] = df_papp._time.dt.day_of_week
+    df_papp["date"] = pd.to_datetime(df_papp._time.dt.date)
+    df_papp["hour"] = df_papp._time.dt.hour
+    df_papp["month_name"] = df_papp._time.apply(lambda d: d.strftime("%B %Y"))
+    df_papp["week"] = df_papp._time.dt.isocalendar().week
+    df_papp["week"] -= df_papp.week.min()
+
+    df_papp = pd.concat([df_papp_old, df_papp])
+
+    # Caching data
+    df_papp.to_parquet(papp_cache_file)
+
+    return df_papp
+
+
+def get_base_day(
+    influxdb_client: InfluxDBConnector,
+    base_cache_file: str,
+    energy_prices: Dict[str, float],
+):
+    if Path(base_cache_file).exists():
+        df_base_day_old = pd.read_parquet(base_cache_file)
+
+        start_date = df_base_day_old._time.max()
+        df_base_day_old = df_base_day_old[df_base_day_old._time < start_date]
+    else:
+        start_date = influxdb_client.query_time_field(
+            MEASUREMENT, BASE_FIELD, func="first"
+        )
+        df_base_day_old = pd.DataFrame()
+
+    # Query base field
+    df_base_day = influxdb_client.query_field(
+        "teleinfo", "BASE", start_date, groupby_interval="1d", aggregation_func="min"
+    )
+
+    max_base = influxdb_client.query_last_field("teleinfo", "BASE")
+
+    # Group by date
+    # df_base_day = df_base.groupby("date").agg({"BASE": "min"}).reset_index()
+
+    # Get time features
+    df_base_day["date"] = pd.to_datetime(df_base_day._time.dt.date)
+    df_base_day["day"] = df_base_day.date.apply(lambda d: int(d.strftime("%d")))
+    df_base_day["day_of_week"] = df_base_day.date.apply(lambda d: d.weekday())
+    df_base_day["month_name"] = df_base_day.date.apply(lambda d: d.strftime("%B %Y"))
+
+    # Get energy consumption
+    df_base_day_shift = df_base_day.BASE.shift(-1)
+    df_base_day_shift.iloc[-1] = max_base
+    df_base_day["energy_consumption"] = df_base_day_shift - df_base_day.BASE
+    df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
+        lambda row: (
+            row["energy_consumption"] * energy_prices["week"] / 1000
+            if row["day_of_week"] < 5
+            else row["energy_consumption"] * energy_prices["weekend"] / 1000
+        ),
+        axis=1,
+    )
+
+    df_base_day = pd.concat([df_base_day_old, df_base_day])
+
+    # Caching data
+    df_base_day.to_parquet(base_cache_file)
+
+    return df_base_day
+
+
+def get_papp_day(df_papp):
+    # Group papp by day
+    df_papp_day = (
+        df_papp.groupby(["date", "month_name", "day_of_week"])
+        .agg({"PAPP": "sum"})
+        .reset_index()
+    )
+
+    # Get time features
+    df_papp_day["day"] = df_papp_day.date.apply(lambda d: int(d.strftime("%d")))
+    df_papp_day["day_name"] = df_papp_day.date.apply(lambda d: d.strftime("%A"))
+    df_papp_day["month"] = df_papp_day.date.apply(lambda d: d.month)
+
+    return df_papp_day
+
+
 def plot_distrib_bar(df, group, sort_key, title):
     return (
         df.groupby(list(set((group, sort_key))))
@@ -173,7 +280,6 @@ def get_consumption_layout(df_papp_day, df_base_day, select_month):
                 sizing_mode="stretch_width",
             ),
         )
-        
 
         print(f"Consumption layout time {time.perf_counter() - starting_time:.4f} s")
         return pn.Card(
@@ -201,7 +307,8 @@ def get_calendar_card(df_papp_day, date, max_papp):
 
     card = pn.Card(
         pn.pane.Matplotlib(
-            bar_fig, sizing_mode="stretch_both",
+            bar_fig,
+            sizing_mode="stretch_both",
         ),
         title=title,
         collapsible=False,
@@ -229,6 +336,8 @@ def get_calendar_layout(df_papp, select_month):
         for date in df_papp_month.date.unique():
             df_papp_day = df_papp_month[df_papp_month.date == date]
 
+            date = dt.datetime.utcfromtimestamp(int(date) / 1e9)
+
             grid_layout[
                 date.isocalendar().week - min_week, date.isocalendar().weekday - 1
             ] = get_calendar_card(df_papp_day, date, max_papp)
@@ -244,113 +353,6 @@ def get_calendar_layout(df_papp, select_month):
         )
 
     return get_calendar
-
-
-def get_papp(influxdb_client: InfluxDBConnector, papp_cache_file: str) -> pd.DataFrame:
-    if Path(papp_cache_file).exists():
-        df_papp_old = pd.read_parquet(papp_cache_file)
-
-        start_date = df_papp_old._time.max()
-        df_papp_old = df_papp_old[df_papp_old._time < start_date]
-    else:
-        start_date = influxdb_client.query_time_field(
-            MEASUREMENT, PAPP_FIELD, func="first"
-        )
-        df_papp_old = pd.DataFrame()
-
-    # Query papp field
-    df_papp = influxdb_client.query_field(
-        MEASUREMENT,
-        PAPP_FIELD,
-        start_date,
-        groupby_interval="1h",
-        aggregation_func="mean",
-    )
-
-    # Get time features
-    df_papp["day"] = df_papp._time.dt.day
-    df_papp["day_of_week"] = df_papp._time.dt.day_of_week
-    df_papp["date"] = df_papp._time.dt.date
-    df_papp["hour"] = df_papp._time.dt.hour
-    df_papp["month_name"] = df_papp._time.apply(lambda d: d.strftime("%B %Y"))
-    df_papp["week"] = df_papp._time.dt.isocalendar().week
-    df_papp["week"] -= df_papp.week.min()
-
-    df_papp = pd.concat([df_papp_old, df_papp])
-
-    # Caching data
-    df_papp.to_parquet(papp_cache_file)
-
-    return df_papp
-
-
-def get_base_day(
-    influxdb_client: InfluxDBConnector,
-    base_cache_file: str,
-    energy_prices: Dict[str, float],
-):
-    if Path(base_cache_file).exists():
-        df_base_day_old = pd.read_parquet(base_cache_file)
-
-        start_date = df_base_day_old._time.max()
-        df_base_day_old = df_base_day_old[df_base_day_old._time < start_date]
-    else:
-        start_date = influxdb_client.query_time_field(
-            MEASUREMENT, BASE_FIELD, func="first"
-        )
-        df_base_day_old = pd.DataFrame()
-
-    # Query base field
-    df_base_day = influxdb_client.query_field(
-        "teleinfo", "BASE", start_date, groupby_interval="1d", aggregation_func="min"
-    )
-
-    max_base = influxdb_client.query_last_field("teleinfo", "BASE")
-
-    # Group by date
-    # df_base_day = df_base.groupby("date").agg({"BASE": "min"}).reset_index()
-
-    # Get time features
-    df_base_day["date"] = df_base_day._time.dt.date
-    df_base_day["day"] = df_base_day.date.apply(lambda d: int(d.strftime("%d")))
-    df_base_day["day_of_week"] = df_base_day.date.apply(lambda d: d.weekday())
-    df_base_day["month_name"] = df_base_day.date.apply(lambda d: d.strftime("%B %Y"))
-
-    # Get energy consumption
-    df_base_day_shift = df_base_day.BASE.shift(-1)
-    df_base_day_shift.iloc[-1] = max_base
-    df_base_day["energy_consumption"] = df_base_day_shift - df_base_day.BASE
-    df_base_day["price"] = df_base_day[["day_of_week", "energy_consumption"]].apply(
-        lambda row: (
-            row["energy_consumption"] * energy_prices["week"] / 1000
-            if row["day_of_week"] < 5
-            else row["energy_consumption"] * energy_prices["weekend"] / 1000
-        ),
-        axis=1,
-    )
-
-    df_base_day = pd.concat([df_base_day_old, df_base_day])
-
-    # Caching data
-    df_base_day.to_parquet(base_cache_file)
-
-    return df_base_day
-
-
-def get_papp_day(df_papp):
-    # Group papp by day
-    df_papp_day = (
-        df_papp.groupby(["date", "month_name", "day_of_week"])
-        .agg({"PAPP": "sum"})
-        .reset_index()
-    )
-
-    # Get time features
-    df_papp_day["day"] = df_papp_day.date.apply(lambda d: int(d.strftime("%d")))
-    df_papp_day["day_name"] = df_papp_day.date.apply(lambda d: d.strftime("%A"))
-    df_papp_day["month"] = df_papp_day.date.apply(lambda d: d.month)
-
-    return df_papp_day
 
 
 def build_dashboard():
