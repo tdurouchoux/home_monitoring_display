@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Literal
 import re
 import logging
 import datetime as dt
@@ -76,20 +76,13 @@ class InfluxDBConnector:
             }
             first_field = list(fields.keys())[0]
 
-            query_first = f"SELECT first({first_field}) FROM {measurement[0]}"
-            query_last = f"SELECT last({first_field}) FROM {measurement[0]}"
-
             schema[measurement[0]] = {
                 "fields": fields,
                 "first_date": (
-                    self.client.query(query_first)[measurement[0]]
-                    .index[0]
-                    .tz_convert(pytz.timezone(self.timezone))
+                    self.query_time_field(measurement[0], first_field, func="first")
                 ),
                 "last_date": (
-                    self.client.query(query_last)[measurement[0]]
-                    .index[0]
-                    .tz_convert(pytz.timezone(self.timezone))
+                    self.query_time_field(measurement[0], first_field, func="last")
                 ),
             }
 
@@ -123,7 +116,8 @@ class InfluxDBConnector:
                         FROM {measurement}
                         WHERE time > {self.convert_time_cond(start)}
                         AND time < {self.convert_time_cond(stop)}
-                        GROUP BY time({groupby_interval}) FILL(null)"""
+                        GROUP BY time({groupby_interval}) FILL(null)
+                        tz('Europe/Paris')"""
 
         query_result = self.client.query(query)
 
@@ -154,6 +148,20 @@ class InfluxDBConnector:
 
         df_mean_query = self.client.query(query)[measurement]
         return df_mean_query.iloc[0][field]
+
+    def query_time_field(
+        self,
+        measurement: str,
+        field: str,
+        func: Literal["last", "first"] = "last",
+    ) -> pd.DataFrame:
+        self._connect()
+
+        query = f"""SELECT {func}({field}) as {field}
+                    FROM {measurement}"""
+
+        df_query_result = self.client.query(query)[measurement]
+        return df_query_result.index[0].tz_convert(pytz.timezone(self.timezone))
 
     def query_last_field(
         self,
