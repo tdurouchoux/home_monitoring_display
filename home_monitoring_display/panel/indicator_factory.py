@@ -72,6 +72,10 @@ MAPPING_ICON_ID = {
     "overcast clouds": "04",
 }
 
+UNAVAILABLE_PANE = pn.pane.Str(
+    "Non disponible", sizing_mode="stretch_width", styles={"font-size": "15pt"}
+)
+
 
 def strtime_to_ms(strtime: str) -> int:
     number = int(strtime[:-1])
@@ -92,6 +96,10 @@ def create_trend(
     title: str = "",
 ) -> pn.indicators.Trend:
     df_init = influxdb_connector.query_field(measurement, field, window_size)
+
+    if df_init is None:
+        return UNAVAILABLE_PANE
+
     nb_measures = df_init.shape[0]
 
     trend = pn.indicators.Trend(
@@ -104,10 +112,13 @@ def create_trend(
     )
 
     def update_plot():
-        trend.stream(
-            influxdb_connector.query_field(measurement, field, refresh_rate),
-            rollover=nb_measures,
-        )
+        df_update = influxdb_connector.query_field(measurement, field, refresh_rate)
+
+        if df_update is not None:
+            trend.stream(
+                df_update,
+                rollover=nb_measures,
+            )
 
     pn.state.add_periodic_callback(update_plot, strtime_to_ms(refresh_rate))
 
@@ -131,6 +142,10 @@ def create_number(
         thresholds = list(thresholds.items())
 
     mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
+
+    if mean_value is None:
+        return UNAVAILABLE_PANE
+
     if math_operation is not None:
         mean_value = math_operation(mean_value)
 
@@ -146,10 +161,11 @@ def create_number(
         mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
-        if math_operation is not None:
-            mean_value = math_operation(mean_value)
+        if mean_value is not None:
+            if math_operation is not None:
+                mean_value = math_operation(mean_value)
 
-        number.value = mean_value
+            number.value = mean_value
 
     pn.state.add_periodic_callback(update_value, strtime_to_ms(refresh_rate))
 
@@ -171,6 +187,9 @@ def create_gauge(
 
     mean_value = influxdb_connector.query_agg_field(measurement, field, refresh_rate)
 
+    if mean_value is None:
+        return UNAVAILABLE_PANE
+
     gauge = pn.indicators.Gauge(
         name=name,
         value=int(mean_value),
@@ -184,7 +203,8 @@ def create_gauge(
         mean_value = influxdb_connector.query_agg_field(
             measurement, field, refresh_rate
         )
-        gauge.value = int(mean_value)
+        if mean_value is not None:
+            gauge.value = int(mean_value)
 
     pn.state.add_periodic_callback(update_value, strtime_to_ms(refresh_rate))
 
@@ -214,6 +234,9 @@ def create_weather_icon(
 ):
     weather_description = influxdb_connector.query_last_field(measurement, field)
 
+    if weather_description is None:
+        return UNAVAILABLE_PANE
+
     pane_image = pn.pane.PNG(
         icon_url(weather_description),
         max_height=350,
@@ -229,8 +252,9 @@ def create_weather_icon(
     def update_value():
         weather_description = influxdb_connector.query_last_field(measurement, field)
 
-        pane_image.object = icon_url(weather_description)
-        text_description.value = weather_description
+        if weather_description is not None:
+            pane_image.object = icon_url(weather_description)
+            text_description.value = weather_description
 
     pn.state.add_periodic_callback(update_value, strtime_to_ms(refresh_rate))
 
