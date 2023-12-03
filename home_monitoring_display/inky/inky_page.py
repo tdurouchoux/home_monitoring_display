@@ -128,8 +128,12 @@ class InkyPage(ABC):
 
         return img
 
-    def display_image(self, data: Dict) -> None:
+    def display_image(self, data: Dict, rotate: bool = True) -> None:
         img = self.get_image(data)
+
+        if rotate:
+            img = img.rotate(180)
+
         print("Created image")
         self.inky_display.set_image(img)
         self.inky_display.show()

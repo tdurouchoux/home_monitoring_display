@@ -1,4 +1,4 @@
-data_dir: &DATA_DIR data
+data_dir: &DATA_DIR /home/tdurouchoux/home_monitoring_display/data
 
 influxdb_connector: pi
 
