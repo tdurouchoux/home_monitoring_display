@@ -1,0 +1,9 @@
+<connnector_name_1>:
+  measures:
+    <measure_1>: "<name_measure_1>"
+    <measure_2>: "<name_measure_2>"
+
+<connector_name_2>: 
+  measures:
+    <measure_1>: "<name_measure_1>"
+    <measure_2>: "<name_measure_2>"

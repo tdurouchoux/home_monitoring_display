@@ -1,0 +1,122 @@
+title: <dashboard_title>
+
+temperature_thresholds: &temperature_thresholds
+  18: blue
+  22: green
+  26: orange
+  50: red
+
+humidity_thresholds: &humidity_thresholds
+  0.2: red
+  0.4: orange
+  0.6: green
+  0.8: blue
+  1: purple
+
+outside_temperature_thresholds: &outside_temperature_thresholds
+  5: blue
+  15: green
+  25: orange
+  100: red
+
+cpu_thresholds: &cpu_thresholds
+  0.2: blue
+  0.4: green
+  0.6: yellow
+  0.8: orange
+  1: red 
+
+pi_temp_thresholds: &pi_temp_thresholds
+  0.3: blue
+  0.5: green
+  0.7: yellow
+  0.9: orange
+  1: red
+
+memory_thresholds: &memory_thresholds
+  0.2: blue
+  0.4: green
+  0.6: yellow
+  0.8: orange
+  1: red 
+
+indicators_parameters:
+  window_size: 10m
+
+layouts:
+  - title: <consumption_title>
+    influxdb_connector: <connector_name>
+    indicators:
+      - type: trend
+        title: "Puissance apparente (W)"
+        measurement: <elec_measurement>
+        field: <papp_field>
+        refresh_rate: 5s
+        window_size: 10m
+      - type: trend
+        title: "Courant instantané (A)"
+        measurement: <elec_measurement>
+        field: <current_field>
+        refresh_rate: 5s
+        window_size: 10m
+      - type: number
+        name: "Consommation totale"
+        measurement: <elec_measurement>
+        field: <base_field>
+        refresh_rate: 5m
+        string_format: "{value:,.0f} kWh"
+        math_operation: !math_op ["/", 1000]
+  - title: <climate_title>
+    influxdb_connector: <connector_name>
+    indicators:
+      - type: number
+        name: "Température"
+        measurement: <climate_measurement>
+        field: <temp_field>
+        refresh_rate: 120s
+        thresholds: *temperature_thresholds
+        string_format: "{value:.1f}°C"
+      - type: gauge
+        name: "Humidité"
+        measurement: <climate_measurement>
+        field: <hum_field>
+        refresh_rate: 120s
+        bounds: [0, 100]
+        thresholds: *humidity_thresholds
+        format_suffix: "%"
+      - type: number
+        name: <pressure_field>
+        measurement: <climate_measurement>
+        field: pressure
+        refresh_rate: 120s
+        string_format: "{value:.4f} Bar"
+        math_operation: !math_op ["/", 1000]
+  - title: "Pi salon"
+    influxdb_connector: <connector_name>
+    indicators:
+      - type: gauge
+        name: "CPU"
+        measurement: <system_measurement>
+        field: <cpu_field>
+        refresh_rate: 1m
+        bounds: [0, 100]
+        thresholds: *cpu_thresholds
+        format_suffix: "%"
+      - type: gauge
+        name: "Temperature"
+        measurement: <system_measurement>
+        field: <temp_field>
+        refresh_rate: 1m
+        bounds: [20, 85]
+        thresholds: *pi_temp_thresholds
+        format_suffix: "°C"
+      - type: gauge
+        name: "Stockage"
+        measurement: <system_measurement>
+        field: <memory_field>
+        refresh_rate: 30m
+        bounds: [0, 100]
+        thresholds: *memory_thresholds
+        format_suffix: "%"
+
+      

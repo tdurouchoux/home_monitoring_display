@@ -1,0 +1,11 @@
+<connnector_name_1>:
+  username: <username>
+  password: <password>
+  database: <database>
+  host: <ip>
+
+<connnector_name_2>:
+  username: <username>
+  password: <password>
+  database: <database>
+  host: <ip>

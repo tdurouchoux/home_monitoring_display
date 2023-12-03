@@ -1,0 +1,12 @@
+[Unit]
+Description=Launch inky display with home monitoring dashboards
+Requires=home_monitoring.service
+After=home_monitoring.service
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/home/tdurouchoux/home_monitoring_display/services/inky_dashboards.sh
+
+[Install]
+WantedBy=multi-user.target
