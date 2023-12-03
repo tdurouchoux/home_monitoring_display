@@ -12,7 +12,7 @@ from home_monitoring_display.influxdb.query_influxdb import InfluxDBConnector
 from home_monitoring_display.influxdb.multi_view_connector import MultiViewConnector
 from home_monitoring_display.utils import extract_configs
 
-# Adaptative range interval
+# TODO Adaptative range interval
 
 
 def get_date_range(date_range, first_date):
@@ -26,25 +26,39 @@ def get_date_range(date_range, first_date):
 def get_groupby_interval(start, stop):
     time_delta = stop - start
 
-    if time_delta > dt.timedelta(days=30):
+    if time_delta >= dt.timedelta(days=60):
+        return "1h"
+    if time_delta >= dt.timedelta(days=30):
         return "30m"
-    if time_delta > dt.timedelta(days=7):
-        return "10m"
-    if time_delta > dt.timedelta(days=1):
-        return "1m"
+    if time_delta >= dt.timedelta(days=7):
+        return "15m"
+    if time_delta >= dt.timedelta(days=1):
+        return "5m"
     return None
 
 
-def plot_measures(multi_view_connector, measures, group_plots, date_range):
+def plot_measures(
+    multi_view_connector, measures, group_plots, smooth_plots, date_range
+):
     start = pd.Timestamp(date_range[0]).replace(tzinfo=multi_view_connector.timezone)
     stop = pd.Timestamp(date_range[1]).replace(tzinfo=multi_view_connector.timezone)
+
+    if smooth_plots:
+        groupby_interval = get_groupby_interval(start, stop)
+    else:
+        groupby_interval = None
 
     if len(measures) == 0:
         return pn.pane.Markdown("## No measures Selected")
 
     if len(measures) == 1:
         return pn.pane.HoloViews(
-            multi_view_connector.query_measure(*measures[0][1:], start=start, stop=stop)
+            multi_view_connector.query_measure(
+                *measures[0][1:],
+                groupby_interval=groupby_interval,
+                start=start,
+                stop=stop
+            )
             .rename(
                 columns={measures[0][3]: " ".join((measures[0][0], measures[0][3]))}
             )
@@ -53,7 +67,9 @@ def plot_measures(multi_view_connector, measures, group_plots, date_range):
         )
 
     list_plots = [
-        multi_view_connector.query_measure(*measure[1:], start=start, stop=stop)
+        multi_view_connector.query_measure(
+            *measure[1:], groupby_interval=groupby_interval, start=start, stop=stop
+        )
         .rename(columns={measure[3]: " ".join((measure[0], measure[3]))})
         .hvplot(x="_time", responsive=True)
         for measure in measures
@@ -118,6 +134,8 @@ def build_dashboard():
 
     group_plots = pn.widgets.Checkbox(name="Group plots", value=True)
 
+    smooth_plots = pn.widgets.Checkbox(name="Smooth plots", value=True)
+
     measures_options = {
         " | ".join((analytics_conf[connector_name]["measures"][measurement], field)): (
             analytics_conf[connector_name]["measures"][measurement],
@@ -140,7 +158,12 @@ def build_dashboard():
 
     # Check how bind works
     plot_widget = pn.bind(
-        plot_measures, multi_view_connector, measures, group_plots, date_range_picker
+        plot_measures,
+        multi_view_connector,
+        measures,
+        group_plots,
+        smooth_plots,
+        date_range_picker,
     )
 
     pn.extension(sizing_mode="stretch_both")
@@ -150,6 +173,7 @@ def build_dashboard():
             date_range_select,
             date_range_picker,
             group_plots,
+            smooth_plots,
             measures,
         ],
         main=plot_widget,

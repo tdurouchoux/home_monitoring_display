@@ -1,0 +1,10 @@
+data_dir: &DATA_DIR /home/tdurouchoux/home_monitoring_display/data
+
+influxdb_connector: pi
+
+papp_cache_file: !path_join [*DATA_DIR, "teleinfo_papp.parquet"]
+base_cache_file: !path_join [*DATA_DIR, "teleinfo_base_day.parquet"]
+
+energy_prices:
+  weekend: 0.1650
+  week: 0.2352

@@ -1,0 +1,14 @@
+homemaster:
+  measures:
+    bme688: "Salon"
+    openweather_current_weather: "Extérieur"
+    system_hm_1 : "Système pi salon (1)"
+    system_hm_2 : "Système pi salon (2)"
+
+pi: 
+  measures:
+    bme280: "Cuisine"
+    teleinfo: "Elec"
+    system_1 : "Système pi cuisine (1)"
+    system_2 : "Système pi cuisine (2)"
+    sensorhub: "Old cuisine"

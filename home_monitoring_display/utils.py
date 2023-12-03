@@ -28,10 +28,15 @@ def load_config(config_file: str) -> Dict:
         else:
             raise ValueError(f'''Operator should be in ["+", "-", "/", "*"])
                                Received following operator: {seq[0]}''')
+
+    def path_join(loader, node):
+        seq = loader.construct_sequence(node)
+        return Path(*seq)
     
     loader = yaml.SafeLoader
 
     loader.add_constructor("!math_op", math_op)
+    loader.add_constructor("!path_join", path_join)
 
     with open(config_file, "r") as f:
         config = yaml.load(f, Loader=loader)
