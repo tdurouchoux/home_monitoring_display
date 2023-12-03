@@ -129,13 +129,18 @@ class InfluxDBConnector:
 
         if len(query_result) == 0:
             return None
+        try:
+            df_query = query_result[measurement]
 
-        df_query = query_result[measurement]
+            df_query = df_query.reset_index(names=["_time"])
+            df_query._time = df_query._time.dt.tz_convert(
+                tz=pytz.timezone(self.timezone)
+            )
 
-        df_query = df_query.reset_index(names=["_time"])
-        df_query._time = df_query._time.dt.tz_convert(tz=pytz.timezone(self.timezone))
+            return df_query
 
-        return df_query
+        except KeyError:
+            return None
 
     def query_agg_field(
         self,
@@ -151,9 +156,12 @@ class InfluxDBConnector:
                     FROM {measurement}
                     WHERE time > {self.convert_time_cond(start)}
                     AND time < {self.convert_time_cond(stop)}"""
+        try:
+            df_mean_query = self.client.query(query)[measurement]
+            return df_mean_query.iloc[0][field]
 
-        df_mean_query = self.client.query(query)[measurement]
-        return df_mean_query.iloc[0][field]
+        except KeyError:
+            return None
 
     def query_last_field(
         self,
@@ -165,6 +173,9 @@ class InfluxDBConnector:
         query_last = f"""SELECT last({field}) as {field}
                 FROM {measurement}"""
 
-        df_query_last = self.client.query(query_last)[measurement]
+        try:
+            df_query_last = self.client.query(query_last)[measurement]
 
-        return df_query_last.iloc[0][field]
+            return df_query_last.iloc[0][field]
+        except KeyError:
+            return None
