@@ -1,0 +1,10 @@
+data_dir: &DATA_DIR <data_dir>
+
+influxdb_connector: <connector_name>
+
+papp_cache_file: !path_join [*DATA_DIR, <papp_cache_file>]
+base_cache_file: !path_join [*DATA_DIR, <base_cache_file>]
+
+energy_prices:
+  weekend: <weekend_prices>
+  week: <week_prices>

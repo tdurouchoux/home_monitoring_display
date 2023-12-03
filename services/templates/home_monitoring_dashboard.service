@@ -1,0 +1,13 @@
+[Unit]
+Description=Launch local dashboarding server
+Requires=<home_monitoring_service>
+After=<home_monitoring_service>
+
+[Service]
+Type=simple
+Restart=always
+RuntimeMaxSec=1d
+ExecStart=<path_to_dir>/home_monitoring_display/services/home_monitoring_dashboard.sh
+
+[Install]
+WantedBy=multi-user.target

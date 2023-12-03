@@ -1,0 +1,88 @@
+
+resources_path: "resources"
+font: "MesloLGS NF Regular.ttf"
+
+
+homemonitor:
+  refresh_period: 600
+  fields_configuration: 
+    weather:
+      influxdb_connector: <connector_name>
+      measurement: <weather_measurement>
+      fields:
+        temperature: <temp_field>
+        humidity: <hum_field>
+        wind_speed: <wind_field>
+        weather_description: <weather_field>
+    salon:
+      influxdb_connector: <connector_name>
+      measurement: <salon_measurement>
+      fields: 
+        temperature: <temp_field>
+        humidity: <hum_field>
+    cuisine:
+      influxdb_connector: <connector_name>
+      measurement: <cuisine_measurement>
+      fields:
+        temperature: <temp_field>
+        humidity: <hum_field>
+    elec:
+      influxdb_connector: <connector_name>
+      measurement: <elec_measurement>
+      fields:
+        app_power: <papp_field>
+
+dayweather:
+  refresh_period: 600
+  gps_coordinates: [<lat>, <lon>]
+
+citiesweather:
+  refresh_period: 1800
+  cities:
+    - <city_1> 
+    - <city_2> 
+    - <city_3> 
+    - <city_4> 
+
+elecconsumption:
+  refresh_period: 300
+  fields_configuration:
+    influxdb_connector: <connector_name>
+    measurement: <teleinfo_measurement>
+    fields:
+      app_power: <papp_field>
+      total_power: <base_field>
+
+sysmonitor:
+  refresh_period: 600
+  fields_configuration:
+    <connector_name_1>:
+      cpu_usage:
+        measurement: <system_measurement>
+        field: <cpu_field>
+      ram_usage:
+        measurement: <system_measurement>
+        field: <ram_field>
+      mem_usage: 
+        measurement: <system_measurement>
+        field: <memory_field>
+        max_value: 29
+      cpu_temp: 
+        measurement: <system_measurement>
+        field: <cpu_field>
+        max_value: 85
+    <connector_name_2>:
+      cpu_usage:
+        measurement: <system_measurement>
+        field: <cpu_field>
+      ram_usage:
+        measurement: <system_measurement>
+        field: <ram_field>
+      mem_usage: 
+        measurement: <system_measurement>
+        field: <memory_field>
+        max_value: 30
+      cpu_temp: 
+        measurement: <system_measurement>
+        field: <cpu_field>
+        max_value: 85
