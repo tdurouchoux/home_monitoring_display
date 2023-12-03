@@ -85,9 +85,9 @@ layouts:
         thresholds: *humidity_thresholds
         format_suffix: "%"
       - type: number
-        name: <pressure_field>
+        name: "Pression"
         measurement: <climate_measurement>
-        field: pressure
+        field: <pressure_field>
         refresh_rate: 120s
         string_format: "{value:.4f} Bar"
         math_operation: !math_op ["/", 1000]
