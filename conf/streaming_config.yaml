@@ -1,4 +1,4 @@
-title: "Maison Avignon"
+title: "Maison Carnac"
 
 temperature_thresholds: &temperature_thresholds
   18: blue
@@ -44,7 +44,7 @@ indicators_parameters:
   window_size: 10m
 
 layouts:
-  - title: "Capteurs entree"
+  - title: "Capteurs salon"
     influxdb_connector: homemonitor
     indicators:
       - type: number
@@ -124,7 +124,7 @@ layouts:
         field: weather_description
         refresh_rate: 10m
 
-  - title: "Pi entree"
+  - title: "Pi salon"
     influxdb_connector: homemonitor
     indicators:
       - type: gauge
